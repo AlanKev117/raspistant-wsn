@@ -1,5 +1,6 @@
 {
     "sensor-type": "pir",
     "device-name": "puerta",
-    "pin-number": 14
+    "sensor-pin": 14,
+    "led-pin": 15
 }
