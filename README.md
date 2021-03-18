@@ -11,3 +11,8 @@ Una red de sensores inalámbricos alimentada por Google Assistant embebido en Ra
     ```
 
 * El directorio `sensor_node/` contiene un proyecto en Python 3.5 con el programa que correrá el nodo sensor para cualquier tipo de magnitud física.
+
+---
+
+## Contribuidores
+* @AlanKev117: Alan Fuentes
