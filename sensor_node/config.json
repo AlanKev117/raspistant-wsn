@@ -1,0 +1,5 @@
+{
+    "sensor-type": "pir",
+    "device-name": "puerta",
+    "pin-number": 14
+}
