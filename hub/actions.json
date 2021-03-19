@@ -29,8 +29,8 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "blink ($Speed:speed)? $SchemaOrg_Number:number times",
-                        "blink $SchemaOrg_Number:number times ($Speed:speed)?"
+                        "parpadea ($Speed:speed)? $SchemaOrg_Number:number veces",
+                        "parpadea $SchemaOrg_Number:number veces ($Speed:speed)?"
                     ]
                 }
             },
@@ -40,7 +40,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": "Blinking $number times"
+                                    "textToSpeech": "Parpadeando $number veces"
                                 }
                             },
                             {
@@ -56,6 +56,98 @@
                     }
                 }
             }
+        },
+        {
+            "name": "DESCUBRIMIENTO",
+            "availability": {
+                "deviceClasses": [
+                    {
+                        "assistantSdkDevice": {}
+                    }
+                ]
+            },
+            "intent": {
+                "name": "DESCUBRIMIENTO",
+                "parameters":[
+                    {
+                        "name":"nada",
+                        "type":"SchemaOrg_Text"
+                    }
+                ],
+                "trigger": {
+                    "queryPatterns": [
+                        "descubre nodos sensores",
+                        "descubrir nodos sensores"
+                    ]
+                }
+            },
+            "fulfillment": {
+                "staticFulfillment": {
+                    "templatedResponse": {
+                        "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "Descubriendo nodos sensores"
+                                }
+                            },
+                            {
+                                "deviceExecution": {
+                                    "command": "descubrirNodos",
+                                    "params": {
+                                    "nada": "$nada"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "LISTADO",
+            "availability": {
+                "deviceClasses": [
+                    {
+                        "assistantSdkDevice": {}
+                    }
+                ]
+            },
+            "intent": {
+                "name": "LISTADO",
+                "parameters":[
+                    {
+                        "name":"nada",
+                        "type":"SchemaOrg_Text"
+                    }
+                ],
+                "trigger": {
+                    "queryPatterns": [
+                        "listar nodos sensores",
+                        "lista nodos sensores"
+                    ]
+                }
+            },
+            "fulfillment": {
+                "staticFulfillment": {
+                    "templatedResponse": {
+                        "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "Listando nodos sensores"
+                                }
+                            },
+                            {
+                                "deviceExecution": {
+                                    "command": "listarNodos",
+                                    "params": {
+                                    "nada": "$nada"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
         }
     ],
     "types": [
@@ -63,25 +155,26 @@
             "name": "$Speed",
             "entities": [
                 {
-                    "key": "SLOWLY",
+                    "key": "LENTO",
                     "synonyms": [
-                        "slowly",
-                        "slow"
+                        "lento",
+                        "lentamente",
+                        "despacio"
                     ]
                 },
                 {
-                    "key": "NORMALLY",
+                    "key": "NORMAL",
                     "synonyms": [
-                        "normally",
+                        "normal",
                         "regular"
                     ]
                 },
                 {
-                    "key": "QUICKLY",
+                    "key": "RAPIDO",
                     "synonyms": [
-                        "quickly",
-                        "fast",
-                        "quick"
+                        "rapido",
+                        "rapidamente",
+                        "veloz"
                     ]
                 }
             ]
