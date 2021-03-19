@@ -1,6 +1,7 @@
 import click
-from rpyc.utils.server import ThreadedServer
+from rpyc.utils.server import ThreadedServer, OneShotServer
 from rpyc.utils.helpers import classpartial
+from rpyc.utils.registry import UDPRegistryClient
 
 from node_service import SensorNodeService
 from sensor import *
@@ -33,11 +34,14 @@ def main(sensor_name, sensor_type, server_port):
             # cambiar is_discoverable a False
             is_discoverable = False
         else:
-            sensor = sensor_types[sensor_type]()
+            sensor = sensor_types[sensor_type](sensor_name)
             service = classpartial(SensorNodeService, sensor)
-            t = ThreadedServer(service, port=server_port)
+            
+            t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient())
+            print("Server started")
             t.start()
-            is_discoverable = True
+            break
+            #is_discoverable = True
 
 
 if __name__ == "__main__":

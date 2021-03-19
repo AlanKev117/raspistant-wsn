@@ -2,3 +2,4 @@ env
 client_secret*
 creds.data
 __pycache__
+.pytest_cache
