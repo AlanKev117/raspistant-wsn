@@ -42,7 +42,7 @@ class PIRSensor(Sensor):
 
     def __init__(self, name):
         self.name = name
-        self.pir_sensor = DigitalInputDevice(pin=14, pull_up=True)
+        self.pir_sensor = DigitalInputDevice(pin=14, pull_up=False)
 
     def get_measurement(self):
         return self.pir_sensor.is_active

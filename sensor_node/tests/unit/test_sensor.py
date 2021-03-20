@@ -9,12 +9,16 @@ def test_dummy_sensor_measurement():
     assert measurement in (True, False)
     assert name == "dummy"
 
-def _test_pir_sensor_measurement():
-    s = PIRSensor()
+def test_pir_sensor_measurement():
+    s = PIRSensor("pir")
     measurement = s.get_measurement()
-    assert measurement in (True, False)
+    name = s.get_name()
+    assert measurement == False
+    assert name == "pir"
 
 def _test_hall_sensor_measurement():
-    s = HallSensor()
+    s = HallSensor("hall")
     measurement = s.get_measurement()
-    assert measurement in (True, False)
+    name = s.get_name()
+    assert measurement == False
+    assert name == "hall"
