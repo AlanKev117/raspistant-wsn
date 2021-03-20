@@ -40,7 +40,8 @@ class DummySensor(Sensor):
 
 class PIRSensor(Sensor):
 
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.pir_sensor = DigitalInputDevice(pin=14, pull_up=True)
 
     def get_measurement(self):
@@ -51,3 +52,18 @@ class PIRSensor(Sensor):
 
     def deactivate(self):
         self.pir_sensor.close()
+
+class HallSensor(Sensor):
+
+    def __init__(self, name):
+        self.name = name
+        self.hall_sensor = DigitalInputDevice(pin=14, pull_up=True)
+
+    def get_measurement(self):
+        return self.hall_sensor.is_active
+
+    def get_name(self):
+        return self.name
+
+    def deactivate(self):
+        self.hall_sensor.close()

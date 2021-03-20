@@ -1,3 +1,5 @@
+import logging
+
 import click
 from rpyc.utils.server import ThreadedServer, OneShotServer
 from rpyc.utils.helpers import classpartial
@@ -24,24 +26,13 @@ def main(sensor_name, sensor_type, server_port):
         "pir": PIRSensor
     }
 
-    is_discoverable = True
+    sensor = sensor_types[sensor_type](sensor_name)
+    service = classpartial(SensorNodeService, sensor)
+    
+    t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient())
+    logging.info("Server started")
+    t.start()
 
-    while True:
-        if is_discoverable:
-            # escuchar broadcast
-            # enviar solicitud a asistente
-            # recibir acuse de recibido
-            # cambiar is_discoverable a False
-            is_discoverable = False
-        else:
-            sensor = sensor_types[sensor_type](sensor_name)
-            service = classpartial(SensorNodeService, sensor)
-            
-            t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient())
-            print("Server started")
-            t.start()
-            break
-            #is_discoverable = True
 
 
 if __name__ == "__main__":
