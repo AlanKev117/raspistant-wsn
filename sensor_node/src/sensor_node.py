@@ -32,7 +32,7 @@ def main(sensor_name, sensor_type, server_port):
     t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient())
     logging.info("Server started")
     t.start()
-
+    sensor.deactivate()
 
 
 if __name__ == "__main__":

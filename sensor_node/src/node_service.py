@@ -15,7 +15,7 @@ class SensorNodeService(rpyc.Service):
             conn.close()
 
     def on_disconnect(self, conn):
-        self.sensor.deactivate()
+        pass
 
     def exposed_get_sensor_reading(self):
         return self.sensor.get_measurement()
