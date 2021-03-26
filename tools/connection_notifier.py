@@ -10,16 +10,16 @@ class ConnectionNotifier:
         self.is_on = False
 
     def check_sensor_node_connection(self):
-        print("Hilo de conexion a internet iniciado")
+        logging.info("Hilo de conexion a internet iniciado")
         led = LED(18)
         while True:
             ip=subprocess.check_output("hostname -I",stderr=subprocess.STDOUT,shell=True).decode()
             if ip=="\n":
-                print("Sin conexion a internet")
+                logging.error("Sin conexion a internet")
                 self.is_on = False
             else:
                 self.is_on = True
-                print("Conectado a internet!")
+                logging.info("Conectado a internet!")
             # Actualizar estado del led.
             if self.is_on:
             	#print("Encendido")
@@ -30,14 +30,14 @@ class ConnectionNotifier:
             time.sleep(5)
 
     def check_assistant_connection(self):
-        print("Hilo de conexion a internet iniciado")
+        logging.info("Hilo de conexion a internet iniciado")
         while True:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(5)
             try:
                 s.connect(('www.google.com', 80))
             except (socket.gaierror, socket.timeout):
-                logging.info("Sin conexion a internet")
+                logging.error("Sin conexion a internet")
                 self.is_on = False
             else:
                 self.is_on = True
