@@ -4,7 +4,10 @@ import os
 import time
 import pathlib
 
-from gtts import gTTS
+try:
+    from gtts import gTTS
+except:
+    pass
 
 ONLINE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"online.mp3"
 OFFLINE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"offline.mp3"

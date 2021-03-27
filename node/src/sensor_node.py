@@ -2,6 +2,7 @@ import logging
 import threading
 import sys
 import pathlib
+import time
 
 import click
 from rpyc.utils.server import ThreadedServer
@@ -11,9 +12,9 @@ from rpyc.utils.registry import UDPRegistryClient
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
 sys.path.append(PROJECT_DIR)
 
-from sensor_node.src.node_service import SensorNodeService
-from sensor_node.src.sensor import Sensor, DummySensor, HallSensor, PIRSensor
 from misc.connection_notifier import ConnectionNotifier
+from node.src.node_service import SensorNodeService
+from node.src.sensor import Sensor, DummySensor, HallSensor, PIRSensor
 
 @click.command()
 @click.option('--sensor-name', default="aleatorio",
@@ -28,10 +29,10 @@ from misc.connection_notifier import ConnectionNotifier
 @click.option('--verbose', '-v', is_flag=True, help='Modo verbose')
 def main(sensor_name, sensor_type, server_port, verbose):
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
-    sensor_node(sensor_name, sensor_type, server_port)
+    sensor_node_process(sensor_name, sensor_type, server_port)
 
 
-def sensor_node(sensor_name, sensor_type, server_port):
+def sensor_node_process(sensor_name, sensor_type, server_port):
     sensor_types = {
         "dummy": DummySensor,
         "pir": PIRSensor,
