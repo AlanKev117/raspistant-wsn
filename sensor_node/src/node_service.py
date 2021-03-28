@@ -1,6 +1,10 @@
 import rpyc
 
-from sensor import Sensor
+try:
+    from .sensor import Sensor
+except (SystemError, ImportError):
+    from sensor import Sensor
+
 
 class SensorNodeService(rpyc.Service):
 
@@ -11,11 +15,12 @@ class SensorNodeService(rpyc.Service):
     def on_connect(self, conn):
         self.clients += 1
         if self.clients > 1:
-            print("Client already connected")
+            self.clients -= 1
+            print("Hay un cliente ya conectado.")
             conn.close()
 
     def on_disconnect(self, conn):
-        self.sensor.deactivate()
+        self.clients -= 1
 
     def exposed_get_sensor_reading(self):
         return self.sensor.get_measurement()

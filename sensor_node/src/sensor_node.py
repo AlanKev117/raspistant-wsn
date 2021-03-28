@@ -3,8 +3,12 @@ from rpyc.utils.server import ThreadedServer, OneShotServer
 from rpyc.utils.helpers import classpartial
 from rpyc.utils.registry import UDPRegistryClient
 
-from node_service import SensorNodeService
-from sensor import *
+try:
+    from .node_service import SensorNodeService
+    from .sensor import *
+except (SystemError, ImportError):
+    from node_service import SensorNodeService
+    from sensor import *
 
 
 @click.command()
@@ -18,31 +22,21 @@ from sensor import *
               metavar='<puerto>', show_default=True,
               help='Puerto por el que el nodo recibe peticiones de medición')
 def main(sensor_name, sensor_type, server_port):
+    sensor_node(sensor_name, sensor_type, server_port)
 
+def sensor_node(sensor_name, sensor_type, server_port):
     sensor_types = {
         "dummy": DummySensor,
         "pir": PIRSensor
     }
 
-    is_discoverable = True
-
-    while True:
-        if is_discoverable:
-            # escuchar broadcast
-            # enviar solicitud a asistente
-            # recibir acuse de recibido
-            # cambiar is_discoverable a False
-            is_discoverable = False
-        else:
-            sensor = sensor_types[sensor_type](sensor_name)
-            service = classpartial(SensorNodeService, sensor)
-            
-            t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient())
-            print("Server started")
-            t.start()
-            break
-            #is_discoverable = True
-
+    sensor = sensor_types[sensor_type](sensor_name)
+    service = classpartial(SensorNodeService, sensor)
+    
+    t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient(timeout=0))
+    print(f"Nodo sensor {sensor_name} iniciado.")
+    t.start()
+    sensor.deactivate()
 
 if __name__ == "__main__":
     main()

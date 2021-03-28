@@ -17,3 +17,4 @@ Una red de sensores inalámbricos alimentada por Google Assistant embebido en Ra
 ## Contribuidores
 * @AlanKev117: Alan Fuentes
 * @Yael-Estrada: Yael Estrada
+* @unknown: Noé Acosta
