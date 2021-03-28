@@ -7,12 +7,9 @@ from rpyc.utils.registry import UDPRegistryClient
 
 try:
     from .node_service import SensorNodeService
-except (SystemError, ImportError):
-    from node_service import SensorNodeService
-
-try:
     from .sensor import *
 except (SystemError, ImportError):
+    from node_service import SensorNodeService
     from sensor import *
 
 

@@ -1,30 +1,43 @@
+from multiprocessing import Process
+import time
+
 import pytest
 import rpyc
 from rpyc.utils.registry import UDPRegistryClient
 
-def discover_devices(service_name: str="SENSORNODE"):
-    rc = UDPRegistryClient()
-    devices = rc.discover(service_name)
-    return devices
+from sensor_node.src.sensor_node import sensor_node
 
-def get_data_from_device(ip="localhost", port=18861):
+# Argumentos del nodo sensor
+SENSOR_NAME = "prueba"
+SENSOR_TYPE = "dummy"
+SENSOR_SERVER_PORT = 3333
+
+
+@pytest.fixture
+def sensor_node_process():
+    sn_process = Process(target=sensor_node,
+                         args=(SENSOR_NAME, SENSOR_TYPE, SENSOR_SERVER_PORT),
+                         daemon=True)
+    sn_process.start()
+    return sn_process
+
+
+def get_data_from_device(ip, port):
     conn = rpyc.connect(ip, port)
-    r = conn.root.get_sensor_reading()
-    n = conn.root.get_sensor_name()
+
+    reading = conn.root.get_sensor_reading()
+    name = conn.root.get_sensor_name()
+
     conn.close()
-    return r, n
 
-def test_sensor_node():
-    devices = discover_devices("SENSORNODE")
-    if len(devices) == 0:
-        pytest.fail(
-            "Sensors weren't found. Make sure rpyc_registry.py is running and devices are available."
-        )
-    else:
-        for device in devices:
-            ip, port = device
-            reading, name = get_data_from_device(ip, port)
-            assert reading in (True, False), "Measurement corrupted"
-            assert type(name) == str, "Corrupted sensor name"
+    return reading, name
 
 
+def test_sensor_node(sensor_node_process):
+    reading, name = get_data_from_device(ip="localhost",
+                                         port=SENSOR_SERVER_PORT)
+
+    assert reading in (True, False), "Measurement corrupted"
+    assert name == SENSOR_NAME, "Corrupted sensor name"
+
+    sensor_node_process.terminate()
