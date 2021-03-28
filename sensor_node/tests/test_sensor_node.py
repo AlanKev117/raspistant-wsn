@@ -14,7 +14,7 @@ def get_data_from_device(ip="localhost", port=18861):
     conn.close()
     return r, n
 
-def test_whole_service():
+def test_sensor_node():
     devices = discover_devices("SENSORNODE")
     if len(devices) == 0:
         pytest.fail(
