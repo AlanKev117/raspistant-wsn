@@ -6,7 +6,7 @@ class RepeatedNodeNameError(Exception):
         self.repeated_name = node_name
 
     def __str__(self):
-        return 
+        return f"Nombre repetido: {self.repeated_name}"
 
 class RPCClient:
     def __init__(self):
