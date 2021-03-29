@@ -1,12 +1,8 @@
 from googlesamples.assistant.grpc.pushtotalk import device_helpers
 import logging
 import time
-import rpyc
-import os
-from gtts import gTTS
-from playsound import playsound
-
-nodos_sensores={}
+from helpers import descubrirNodos
+from helpers import listarNodos
 
 def hub_device_handler_creator(device_id):
     hub_device_handler = device_helpers.DeviceRequestHandler(device_id)
@@ -33,34 +29,25 @@ def hub_device_handler_creator(device_id):
     @hub_device_handler.command('descubrirNodos')
     def descubreNodos(nada):
         logging.info("Descubriendo nodos sensores.")
-        listaNodosSensores=rpyc.discover("SENSORNODE")
-        nodos=0
-        for i in range(len(listaNodosSensores)):
-            ip,port=listaNodosSensores[i]
-            print("Nodo sensor encontrado: IP: %s"%ip)
-            con=rpyc.connect(ip,port)
-            name=con.root.get_Name()
-            print("Nombre: %s"%name)
-            nodos_sensores[name]=(ip,port)
-            nodos+=1
-        time.sleep(1)
-        reproducirVoz("Se encontraron %s nodos"%nodos)
+        nodos=descubrirNodos()
+        logging.info("Se encontraron %d nodos"%nodos)
 
     @hub_device_handler.command('listarNodos')
     def listaNodos(nada):
         logging.info("Listando nodos sensores encontrados")
-        lista=list(nodos_sensores.keys())
-        print(lista)
-        for i in range(len(lista)):
-            logging.info("Nodo: %d %s"%(i+1,lista[i]))
-            reproducirVoz("Nodo: %d %s"%(i+1,lista[i]))
-            time.sleep(1)
+        time.sleep(2)
+        listarNodos()
 
-    def reproducirVoz(cadena):
-        lan="es"
-        myobj=gTTS(text=cadena,lang=lan,slow=False)
-        myobj.save('/tmp/voice_command.mp3')
-        playsound('/tmp/voice_command.mp3')
-        os.remove('/tmp/voice_command.mp3')
+    @hub_device_handler.command('consultarNodo')
+    def consultaNodo(name):
+        logging.info("Obteniendo medición del nodo sensor: %s"%name)
+        time.sleep(1)
+        consultarNodo(name)
+
+    @hub_device_handler.command('desconectarNodo')
+    def desconectaNodo(name):
+        logging.info("Desconectando el nodo sensor: %s"%name)
+        time.sleep(1)
+        desconectarNodo(name)
 
     return hub_device_handler
