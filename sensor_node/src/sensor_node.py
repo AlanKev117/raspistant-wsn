@@ -29,7 +29,8 @@ def main(sensor_name, sensor_type, server_port):
 def sensor_node(sensor_name, sensor_type, server_port):
     sensor_types = {
         "dummy": DummySensor,
-        "pir": PIRSensor
+        "pir": PIRSensor,
+        "hall": HallSensor
     }
 
     sensor = sensor_types[sensor_type](sensor_name)
