@@ -6,13 +6,9 @@ import pytest
 from hub.src.rpc_client import RPCClient 
 
 # Argumentos del nodo sensor (nombre, tipo, puerto)
-SENSOR_1_ARGS = ("morado", "hall", 3000)
-SENSOR_2_ARGS = ("amarillo", "pir", 3000)
+SENSOR_1_ARGS = ("sensor hall", "hall", 3000)
+SENSOR_2_ARGS = ("sensor pir", "pir", 3000)
 SENSORS_ARGS = [SENSOR_1_ARGS, SENSOR_2_ARGS]
-
-#logging.basicConfig(level=logging.DEBUG)
-#LOGGER = logging.getLogger()
-
 
 def test_rpc_integration(caplog):
     """
