@@ -36,7 +36,7 @@ def sensor_node(sensor_name, sensor_type, server_port):
     sensor = sensor_types[sensor_type](sensor_name)
     service = classpartial(SensorNodeService, sensor)
     
-    t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient(timeout=0))
+    t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient(timeout=10))
     print(f"Nodo sensor {sensor_name} iniciado.")
     t.start()
     sensor.deactivate()
