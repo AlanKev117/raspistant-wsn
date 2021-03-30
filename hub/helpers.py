@@ -24,7 +24,7 @@ def listarNodos():
 	logging.info(lista)
 	for i in range(len(lista)):
 		logging.info("Nodo: %d %s"%(i+1,lista[i]))
-		reproducirVoz("Nodo: %d %s"%(i+1,lista[i]))
+		#reproducirVoz("Nodo: %d %s"%(i+1,lista[i]))
 		time.sleep(1)
 	return len(lista)
 
@@ -41,7 +41,7 @@ def descubrirNodos():
 		logging.info("Nombre: %s"%name)
 		nodos_sensores[name]=(ip,port)
 	time.sleep(1)
-	reproducirVoz("Se encontraron %s nodos"%len(nodos_sensores))
+	#reproducirVoz("Se encontraron %s nodos"%len(nodos_sensores))
 	return len(nodos_sensores)
 
 def consultarNodo(nodo):
@@ -50,7 +50,7 @@ def consultarNodo(nodo):
 		sensor=rpyc.connect(ip,port)
 		medicion=sensor.root.get_Measure()
 		logging.info("El nodo sensor regresó esta lectura: %s"%medicion)
-		reproducirVoz("El nodo sensor regresó esta lectura: %s"%medicion)
+		#reproducirVoz("El nodo sensor regresó esta lectura: %s"%medicion)
 		return True
 	except:
 		logging.info("Error obteniendo medida del nodo sensor")
@@ -58,5 +58,5 @@ def consultarNodo(nodo):
 
 def desconectarNodo(nodo):
 	nodos_sensores.pop(nodo)
-	reproducirVoz("Se desconectó el nodo sensor: %s"%nodo)
+	#reproducirVoz("Se desconectó el nodo sensor: %s"%nodo)
 	return True

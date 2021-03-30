@@ -14,6 +14,8 @@ SENSOR_NAME = "prueba"
 SENSOR_TYPE = "dummy"
 SENSOR_HOST= "192.168.1.71"
 SENSOR_SERVER_PORT = 3333
+PORT = 18811  # puerto por defecto
+PRUNING_TIME = 3 # segundos de tiempo de eliminación
 
 @pytest.fixture
 def registry_server_process():
@@ -23,11 +25,6 @@ def registry_server_process():
     rs_process.start()
 
     return rs_process
-
-PORT = 18811  # puerto por defecto
-PRUNING_TIME = 3 # segundos de tiempo de eliminación
-
-
 
 @pytest.fixture
 def sensor_node_process():
