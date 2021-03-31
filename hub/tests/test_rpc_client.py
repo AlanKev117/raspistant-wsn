@@ -56,7 +56,7 @@ def test_rpc_client(registry_server_process, dummy_nodes):
     NUMBER_OF_NODES = len(dummy_nodes)
     
     nodes = rpc_client.discover_sensor_nodes()
-    assert len(nodes) == 2,"Error al descubrir nodos sensores"
+    assert len(nodes) == NUMBER_OF_NODES,"Error al descubrir nodos sensores"
     # Dos nodos a probarse
     for i in range(NUMBER_OF_NODES,-1,-1):
         
