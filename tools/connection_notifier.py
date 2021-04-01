@@ -7,7 +7,7 @@ class ConnectionNotifier:
 	def __init__(self):
 		self.is_on=False
 
-	def check_node_sensor_connection(self):
+	def check_sensor_node_connection(self):
 		print("Hilo de conexion a internet iniciado")
 	    #led=LED(4)
 		while True:
