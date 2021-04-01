@@ -1,10 +1,12 @@
 import logging
-
+import threading
 import click
 from rpyc.utils.server import ThreadedServer, OneShotServer
 from rpyc.utils.helpers import classpartial
 from rpyc.utils.registry import UDPRegistryClient
-
+import sys
+sys.path.insert(1, '/home/yael/Documentos/TT/raspistant-wsn')
+from tools.connection_notifier import ConnectionNotifier
 try:
     from .node_service import SensorNodeService
     from .sensor import *
@@ -35,7 +37,11 @@ def sensor_node(sensor_name, sensor_type, server_port):
 
     sensor = sensor_types[sensor_type](sensor_name)
     service = classpartial(SensorNodeService, sensor)
-    
+
+    conexion=ConnectionNotifier()
+    hilo_internet= threading.Thread(target=conexion.check_node_sensor_connection())
+    hilo_internet.start()
+
     t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient(timeout=10))
     print(f"Nodo sensor {sensor_name} iniciado.")
     t.start()
