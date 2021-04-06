@@ -39,7 +39,7 @@ def sensor_node(sensor_name, sensor_type, server_port):
     service = classpartial(SensorNodeService, sensor)
 
     conexion=ConnectionNotifier()
-    hilo_internet= threading.Thread(target=conexion.check_sensor_node_connection(),daemon=True)
+    hilo_internet= threading.Thread(target=conexion.check_sensor_node_connection,daemon=True)
     hilo_internet.start()
 
     t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient(timeout=10))
