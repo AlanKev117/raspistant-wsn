@@ -10,7 +10,7 @@ class ConnectionNotifier:
 
     def check_sensor_node_connection(self):
         print("Hilo de conexion a internet iniciado")
-        #led = LED(18)
+        led = LED(18)
         while True:
             ip=socket.gethostbyname(socket.gethostname())
             add=str(ip)
