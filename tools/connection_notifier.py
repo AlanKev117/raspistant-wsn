@@ -1,6 +1,7 @@
 import socket
 import time
 import logging
+import subprocess
 from gpiozero import LED
 
 
@@ -12,9 +13,8 @@ class ConnectionNotifier:
         print("Hilo de conexion a internet iniciado")
         led = LED(18)
         while True:
-            ip=socket.gethostbyname(socket.gethostname())
-            add=str(ip)
-            if add.startswith("127.0.0"):
+            ip=subprocess.check_output("hostname -I",stderr=subprocess.STDOUT,shell=True).decode()
+            if ip=="\n":
                 print("Sin conexion a internet")
                 self.is_on = False
             else:
@@ -22,8 +22,10 @@ class ConnectionNotifier:
                 print("Conectado a internet!")
             # Actualizar estado del led.
             if self.is_on:
+            	#print("Encendido")
                 led.on()
             else:
+            	#print("Apagado")
                 led.off()
             time.sleep(5)
 
@@ -43,8 +45,8 @@ class ConnectionNotifier:
             s.close()
 
             # Actualizar estado de conexión.
-            if self.is_on:
+            #if self.is_on:
                 # Reproducir voz para notificar que si hay tamales
-            else:
+            #else:
                 # Reproducir voz para notificar que no se puede no hay tortillas
             time.sleep(5)
