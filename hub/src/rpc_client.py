@@ -1,4 +1,8 @@
 import rpyc
+import logging
+import time
+import threading
+import socket
 from rpyc.utils.registry import UDPRegistryClient
 
 class RepeatedNodeNameError(Exception):
@@ -12,6 +16,7 @@ class RPCClient:
     def __init__(self):
         self._available_nodes = {}
         self._udp_discoverer = UDPRegistryClient()
+        
     
     def discover_sensor_nodes(self):
         nodes = self._udp_discoverer.discover("SENSORNODE")
@@ -28,8 +33,18 @@ class RPCClient:
 
     def get_sensor_reading(self, sensor_name):
         ip, port = self._available_nodes[sensor_name]
+        print("Conectando a: %s"%ip)
+        print(port)
         connection = rpyc.connect(ip, port)
         reading = connection.root.get_sensor_reading()
         connection.close()
         return reading
-    
+
+    def listarNodos(self):
+        lista=list(self._available_nodes.keys())
+        logging.info(lista)
+        for i in range(len(lista)):
+            logging.info("Nodo: %d %s"%(i+1,lista[i]))
+            #reproducirVoz("Nodo: %d %s"%(i+1,lista[i]))
+            time.sleep(1)
+        return len(lista)

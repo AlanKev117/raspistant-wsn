@@ -1,6 +1,11 @@
 from googlesamples.assistant.grpc.pushtotalk import device_helpers
 import logging
 import time
+import sys
+sys.path.insert(1, '/home/yael/Documentos/TT/raspistant-wsn')
+from rpc_client import RPCClient
+
+client=RPCClient()
 
 def hub_device_handler_creator(device_id):
     hub_device_handler = device_helpers.DeviceRequestHandler(device_id)
@@ -23,5 +28,17 @@ def hub_device_handler_creator(device_id):
         for i in range(int(number)):
             logging.info('Device is blinking.')
             time.sleep(delay)
+
+    @hub_device_handler.command('descubrirNodos')
+    def descubreNodos(nada):
+        logging.info("Descubriendo nodos sensores.")
+        nodos=client.discover_sensor_nodes()
+        logging.info("Se encontraron %d nodos"%len(nodos))
+
+    @hub_device_handler.command('listarNodos')
+    def listaNodos(nada):
+        logging.info("Listando nodos sensores encontrados")
+        time.sleep(2)
+        client.listarNodos()
     
     return hub_device_handler
