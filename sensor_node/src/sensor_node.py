@@ -17,7 +17,7 @@ except (SystemError, ImportError):
 
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent)
 sys.path.insert(1, PROJECT_DIR)
-from tools.connection_notifier import ConnectionNotifier
+from helpers.connection_notifier import ConnectionNotifier
 
 @click.command()
 @click.option('--sensor-name', default="aleatorio",
