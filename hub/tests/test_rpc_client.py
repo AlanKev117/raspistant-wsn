@@ -2,6 +2,8 @@ import time
 from multiprocessing import Process
 
 import pytest
+import sys
+sys.path.insert(1, '/home/yael/Documentos/TT/raspistant-wsn')
 
 from registry_server.src.registry_server import registry_server
 from sensor_node.src.sensor_node import sensor_node
@@ -14,7 +16,7 @@ PRUNING_TIME = 3  # segundos de tiempo de eliminación
 # Argumentos del nodo sensor (nombre, tipo, puerto)
 SENSOR_1_ARGS = ("prueba a", "dummy", 4000)
 SENSOR_2_ARGS = ("prueba b", "dummy", 5000)
-SENSORS_ARGS = [SENSOR_1_ARGS, SENSOR_2_ARGS]
+SENSORS_ARGS = [SENSOR_1_ARGS,SENSOR_2_ARGS]
 
 
 @pytest.fixture
@@ -35,6 +37,7 @@ def dummy_nodes():
         sn_process = Process(target=sensor_node,
                              args=sensor_args,
                              daemon=True)
+        time.sleep(1)
         sn_process.start()
         dummy_nodes_list.append(sn_process)
 
@@ -49,15 +52,15 @@ def test_rpc_client(registry_server_process, dummy_nodes):
     Se prueba que el cliente RPC que corre en el asistente de voz, sea capaz de
     detectar nodos sensores y solicitar mediciones de los mismos.
     """
-
     rpc_client = RPCClient()
     NUMBER_OF_NODES = len(dummy_nodes)
+    
+    nodes = rpc_client.discover_sensor_nodes()
+    assert len(nodes) == NUMBER_OF_NODES,"Error al descubrir nodos sensores"
     # Dos nodos a probarse
-    for i in range(NUMBER_OF_NODES, -1, -1):
+    for i in range(NUMBER_OF_NODES,-1,-1):
         
-        nodes = rpc_client.discover_sensor_nodes()
-
-        assert len(nodes) == i, "Error al descubrir nodos sensores"
+        
 
         for sensor_name, _, sensor_port in SENSORS_ARGS[:i]:
             assert sensor_name in nodes, f"Nodo {sensor_name} no identificado"
