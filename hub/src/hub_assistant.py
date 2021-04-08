@@ -29,6 +29,8 @@ import grpc
 import google.auth.transport.grpc
 import google.auth.transport.requests
 import google.oauth2.credentials
+import speech_recognition as sr
+
 
 from google.assistant.embedded.v1alpha2 import (
     embedded_assistant_pb2,
@@ -175,6 +177,10 @@ class HubAssistant(object):
         # Callback for device actions.
         self.device_handler = create_hub_device_handler(device_id)
 
+        # Recognizer for trigger word.
+        self.recognizer = sr.Recognizer()
+        self.recognizer.pause_threshold = 2
+
     def __enter__(self):
         return self
 
@@ -289,3 +295,18 @@ class HubAssistant(object):
         for data in self.conversation_stream:
             # Subsequent requests need audio data, but not config.
             yield embedded_assistant_pb2.AssistRequest(audio_in=data)
+
+    def wait_for_hot_word(self, hot_word):
+        # Microphone listening.
+        with sr.Microphone() as source:
+            print("Detectando palabra clave...")
+            text = self.recognizer.listen(source)
+            text = self.recognizer.recognize_google(text, language="es-MX")
+            while hot_word.lower() not in text.lower():
+                print("Palabra clave no detectada.")
+                print("Texto: {}".format(text))
+                print("Detectando palabra clave...")
+                text = self.recognizer.listen(source)
+                text = self.recognizer.recognize_google(text, language="es-MX")
+            else:
+                print("Palabra clave detectada.")
