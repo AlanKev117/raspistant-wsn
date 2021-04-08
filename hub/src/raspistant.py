@@ -37,24 +37,26 @@ def main(device_model_id, device_id, trigger, verbose):
 
     logging.basicConfig(level=logging.DEBUG if verbose else logging.WARNING)
 
-    with HubAssistant(device_model_id, device_id) as hub_assistant:
+    try:
+        with HubAssistant(device_model_id, device_id) as hub_assistant:
 
-        # Wait for trigger the first time.
-        wait_for_trigger = True
+            # Wait for trigger the first time.
+            wait_for_trigger = True
 
-        # Assist loop
-        while True:
-            if wait_for_trigger:
-                if trigger == "keystroke":
-                    click.pause(info=('Presiona una tecla para activar '
-                                      'el asistente...'))
-                else:
-                    print('Di "Ok, Google" para activar el asistente...')
-                    hub_assistant.wait_for_hot_word("ok google")
-            keep_conversation = hub_assistant.assist()
-            # Wait for trigger if there is no follow-up turn in the conversation.
-            wait_for_trigger = not keep_conversation
-
+            # Assist loop
+            while True:
+                if wait_for_trigger:
+                    if trigger == "keystroke":
+                        click.pause(info=('Presiona una tecla para activar '
+                                        'el asistente...'))
+                    else:
+                        print('Di "Ok, Google" para activar el asistente...')
+                        hub_assistant.wait_for_hot_word("ok google")
+                keep_conversation = hub_assistant.assist()
+                # Wait for trigger if there is no follow-up turn in the conversation.
+                wait_for_trigger = not keep_conversation
+    except Exception:
+        logging.error("Error en asistente.", stack_info=True)
 
 if __name__ == '__main__':
     main()
