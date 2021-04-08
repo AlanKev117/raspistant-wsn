@@ -10,17 +10,12 @@ class SensorNodeService(rpyc.Service):
 
     def __init__(self, sensor: Sensor):
         self.sensor = sensor
-        self.clients = 0
     
     def on_connect(self, conn):
-        self.clients += 1
-        if self.clients > 1:
-            self.clients -= 1
-            print("Hay un cliente ya conectado.")
-            conn.close()
+        pass
 
     def on_disconnect(self, conn):
-        self.clients -= 1
+        pass
 
     def exposed_get_sensor_reading(self):
         return self.sensor.get_measurement()
