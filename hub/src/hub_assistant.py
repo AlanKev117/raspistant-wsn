@@ -298,15 +298,24 @@ class HubAssistant(object):
 
     def wait_for_hot_word(self, hot_word):
         # Microphone listening.
+        text = ""
         with sr.Microphone() as source:
             print("Detectando palabra clave...")
-            text = self.recognizer.listen(source)
-            text = self.recognizer.recognize_google(text, language="es-MX")
+            try:
+                audio_data = self.recognizer.listen(source)
+                text = self.recognizer.recognize_google(audio_data,
+                                                        language="es-MX")
+            except sr.UnknownValueError:
+                # self.recognizer.adjust_for_ambient_noise(source)
+                print("Audio incorrecto. Intente de nuevo.")
+
             while hot_word.lower() not in text.lower():
                 print("Palabra clave no detectada.")
-                print("Texto: {}".format(text))
                 print("Detectando palabra clave...")
-                text = self.recognizer.listen(source)
-                text = self.recognizer.recognize_google(text, language="es-MX")
-            else:
-                print("Palabra clave detectada.")
+                try:
+                    audio_data = self.recognizer.listen(source)
+                    text = self.recognizer.recognize_google(audio_data,
+                                                            language="es-MX")
+                except:
+                    # self.recognizer.adjust_for_ambient_noise(source)
+                    print("Audio incorrecto. Intente de nuevo.")
