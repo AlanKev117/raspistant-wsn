@@ -7,57 +7,6 @@
     },
     "actions": [
         {
-            "name": "com.example.actions.BlinkLight",
-            "availability": {
-                "deviceClasses": [
-                    {
-                        "assistantSdkDevice": {}
-                    }
-                ]
-            },
-            "intent": {
-                "name": "com.example.intents.BlinkLight",
-                "parameters": [
-                    {
-                        "name": "number",
-                        "type": "SchemaOrg_Number"
-                    },
-                    {
-                        "name": "speed",
-                        "type": "Speed"
-                    }
-                ],
-                "trigger": {
-                    "queryPatterns": [
-                        "blink ($Speed:speed)? $SchemaOrg_Number:number times",
-                        "blink $SchemaOrg_Number:number times ($Speed:speed)?"
-                    ]
-                }
-            },
-            "fulfillment": {
-                "staticFulfillment": {
-                    "templatedResponse": {
-                        "items": [
-                            {
-                                "simpleResponse": {
-                                    "textToSpeech": "Blinking $number times"
-                                }
-                            },
-                            {
-                                "deviceExecution": {
-                                    "command": "com.example.commands.BlinkLight",
-                                    "params": {
-                                        "speed": "$speed",
-                                        "number": "$number"
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
-        },
-                {
             "name": "DESCUBRIMIENTO",
             "availability": {
                 "deviceClasses": [
@@ -92,7 +41,7 @@
                             },
                             {
                                 "deviceExecution": {
-                                    "command": "descubrirNodos",
+                                    "command": "descubrir_nodos",
                                     "params": {
                                     "nada": "$nada"
                                     }
@@ -138,7 +87,7 @@
                             },
                             {
                                 "deviceExecution": {
-                                    "command": "listarNodos",
+                                    "command": "listar_nodos",
                                     "params": {
                                     "nada": "$nada"
                                     }

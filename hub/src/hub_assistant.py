@@ -179,7 +179,7 @@ class HubAssistant(object):
 
         # Recognizer for trigger word.
         self.recognizer = sr.Recognizer()
-        self.recognizer.pause_threshold = 2
+        #self.recognizer.pause_threshold = 2
 
     def __enter__(self):
         return self
@@ -306,7 +306,7 @@ class HubAssistant(object):
                 text = self.recognizer.recognize_google(audio_data,
                                                         language="es-MX")
             except sr.UnknownValueError:
-                # self.recognizer.adjust_for_ambient_noise(source)
+                self.recognizer.adjust_for_ambient_noise(source)
                 print("Audio incorrecto. Intente de nuevo.")
 
             while hot_word.lower() not in text.lower():
@@ -317,5 +317,5 @@ class HubAssistant(object):
                     text = self.recognizer.recognize_google(audio_data,
                                                             language="es-MX")
                 except:
-                    # self.recognizer.adjust_for_ambient_noise(source)
+                    self.recognizer.adjust_for_ambient_noise(source)
                     print("Audio incorrecto. Intente de nuevo.")

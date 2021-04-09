@@ -40,11 +40,5 @@ class RPCClient:
         connection.close()
         return reading
 
-    def listarNodos(self):
-        lista=list(self._available_nodes.keys())
-        logging.info(lista)
-        for i in range(len(lista)):
-            logging.info("Nodo: %d %s"%(i+1,lista[i]))
-            #reproducirVoz("Nodo: %d %s"%(i+1,lista[i]))
-            time.sleep(1)
-        return len(lista)
+    def get_available_nodes(self):
+        return self._available_nodes

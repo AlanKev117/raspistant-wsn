@@ -35,7 +35,7 @@ except (SystemError, ImportError):
               help='Verbose logging.')
 def main(device_model_id, device_id, trigger, verbose):
 
-    logging.basicConfig(level=logging.DEBUG if verbose else logging.WARNING)
+    logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
 
     try:
         with HubAssistant(device_model_id, device_id) as hub_assistant:
