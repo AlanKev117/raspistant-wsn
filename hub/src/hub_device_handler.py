@@ -17,7 +17,7 @@ def create_hub_device_handler(device_id):
         reproducirVoz("Se encontraron %d nodos"%len(nodos))
 
     @hub_device_handler.command('listar_nodos')
-    def listar_nodos(self):
+    def listar_nodos(nada):
         logging.info("Listando nodos sensores disponibles")
         time.sleep(1)
         lista=list(client.get_available_nodes().keys())
