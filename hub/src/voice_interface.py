@@ -1,5 +1,6 @@
 from playsound import playsound
 import os
+import logging
 from gtts import gTTS
 
 def reproducirVoz(cadena):
@@ -11,4 +12,6 @@ def reproducirVoz(cadena):
     	os.remove('/tmp/voice_command.mp3')
     	return True
     except:
+    	print("ERROR AL CREAR EL ARCHIVO DE RESPUESTA DE VOZ")
     	return False;
+

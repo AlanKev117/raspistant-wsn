@@ -26,7 +26,19 @@ def create_hub_device_handler(device_id):
             logging.info("Nodo: %d %s"%(i+1,lista[i]))
             reproducirVoz("Nodo: %d %s"%(i+1,lista[i]))
             time.sleep(1)
-        return len(lista)
+
+    @hub_device_handler.command('desconectar_nodo')
+    def desconectar_nodo(sensor_name):
+        logging.info("Desconectando nodo sensor %s"%sensor_name)
+        client.forget_sensor(sensor_name.lower())
+
+    @hub_device_handler.command('consultar_nodo')
+    def consultar_nodo(sensor_name):
+        time.sleep(1)
+        logging.info("Obteniendo datos del nodo sensor %s"%sensor_name)
+        measure=client.get_sensor_reading(sensor_name.lower())
+        reproducirVoz("El sensor %s regresó la medición: %s"%(sensor_name,measure))
+        logging.info("El sensor %s regresó la medición: %s"%(sensor_name,measure))
 
     # @hub_device_handler.command('action.devices.commands.OnOff')
     # def onoff(on):
