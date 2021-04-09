@@ -38,6 +38,7 @@ def main(device_model_id, device_id, trigger, verbose):
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
 
     try:
+
         with HubAssistant(device_model_id, device_id) as hub_assistant:
 
             # Wait for trigger the first time.
@@ -55,8 +56,10 @@ def main(device_model_id, device_id, trigger, verbose):
                 keep_conversation = hub_assistant.assist()
                 # Wait for trigger if there is no follow-up turn in the conversation.
                 wait_for_trigger = not keep_conversation
-    except Exception:
+
+    except Exception as e:
         logging.error("Error en asistente.", stack_info=True)
+        logging.error(e)
 
 if __name__ == '__main__':
     main()
