@@ -1,9 +1,15 @@
 import time
+import logging
 from multiprocessing import Process
 
 import pytest
 import sys
-sys.path.insert(1, '/home/yael/Documentos/TT/raspistant-wsn')
+
+try:
+    sys.path.insert(1, '/home/yael/Documentos/TT/raspistant-wsn')
+except:
+    logging.warning("Intenta ejecutar test desde el directorio raspistant-wsn")
+    
 
 from registry_server.src.registry_server import registry_server
 from sensor_node.src.sensor_node import sensor_node
