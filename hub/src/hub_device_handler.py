@@ -1,10 +1,13 @@
-from googlesamples.assistant.grpc import device_helpers
-from rpc_client import RPCClient
-from voice_interface import *
 import logging
 import time
 
-client=RPCClient()
+from googlesamples.assistant.grpc import device_helpers
+
+from rpc_client import RPCClient
+from voice_interface import reproducir_voz
+
+client = RPCClient()
+
 
 def create_hub_device_handler(device_id):
     hub_device_handler = device_helpers.DeviceRequestHandler(device_id)
@@ -12,19 +15,19 @@ def create_hub_device_handler(device_id):
     @hub_device_handler.command('descubrir_nodos')
     def descubrir_nodos(nada):
         logging.info("Descubriendo nodos sensores.")
-        nodos=client.discover_sensor_nodes()
-        logging.info("Se encontraron %d nodos"%len(nodos))
-        reproducirVoz("Se encontraron %d nodos"%len(nodos))
+        nodos = client.discover_sensor_nodes()
+        logging.info("Se encontraron %d nodos" % len(nodos))
+        reproducir_voz("Se encontraron %d nodos" % len(nodos))
 
     @hub_device_handler.command('listar_nodos')
     def listar_nodos(nada):
         logging.info("Listando nodos sensores disponibles")
         time.sleep(1)
-        lista=list(client.get_available_nodes().keys())
+        lista = list(client.get_available_nodes().keys())
         logging.info(lista)
         for i in range(len(lista)):
-            logging.info("Nodo: %d %s"%(i+1,lista[i]))
-            reproducirVoz("Nodo: %d %s"%(i+1,lista[i]))
+            logging.info("Nodo: %d %s" % (i+1, lista[i]))
+            reproducir_voz("Nodo: %d %s" % (i+1, lista[i]))
             time.sleep(1)
 
     @hub_device_handler.command('desconectar_nodo')

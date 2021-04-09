@@ -5,6 +5,7 @@ import threading
 import socket
 from rpyc.utils.registry import UDPRegistryClient
 
+
 class RepeatedNodeNameError(Exception):
     def __init__(self, node_name):
         self.repeated_name = node_name
@@ -12,12 +13,12 @@ class RepeatedNodeNameError(Exception):
     def __str__(self):
         return f"Nombre repetido: {self.repeated_name}"
 
+
 class RPCClient:
     def __init__(self):
         self._available_nodes = {}
         self._udp_discoverer = UDPRegistryClient()
-        
-    
+
     def discover_sensor_nodes(self):
         nodes = self._udp_discoverer.discover("SENSORNODE")
         self._available_nodes = {}
@@ -33,6 +34,10 @@ class RPCClient:
 
     def get_sensor_reading(self, sensor_name):
         ip, port = self._available_nodes[sensor_name]
+<<<<<<< HEAD
+=======
+        logging.info("Conectando a {}:{}".format(ip, port))
+>>>>>>> 6c1f9328d89f8bd089212917dea59e6c25bbf860
         connection = rpyc.connect(ip, port)
         reading = connection.root.get_sensor_reading()
         connection.close()
@@ -40,6 +45,7 @@ class RPCClient:
 
     def get_available_nodes(self):
         return self._available_nodes
+<<<<<<< HEAD
 
     def forget_sensor(self,sensor_name):
         if sensor_name in self._available_nodes: 
@@ -47,3 +53,5 @@ class RPCClient:
             return True
         else:
             return False
+=======
+>>>>>>> 6c1f9328d89f8bd089212917dea59e6c25bbf860
