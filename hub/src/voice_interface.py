@@ -18,23 +18,23 @@ def reproducir_voz(text, slow=False, lang="es"):
 
     try:
 
-		audio_data = gTTS(text=text, lang=lang, slow=slow)
-		audio_data.save(audio_path)
-		playsound(audio_path)
-		os.remove(audio_path)
+        audio_data = gTTS(text=text, lang=lang, slow=slow)
+        audio_data.save(audio_path)
+        playsound(audio_path)
+        os.remove(audio_path)
 
-	except Exception as e:
-	
-		try:
-			
-			os.remove(audio_path)
-		
-		except FileNotFoundError:
-			
-			logging.warning("No se generó audio.")
-			
-		logging.error("Error al pronunciar cadena.")
-		logging.error(e)
-		
-		raise e
-		
+    except Exception as e:
+    
+        try:
+            
+            os.remove(audio_path)
+        
+        except FileNotFoundError:
+            
+            logging.warning("No se generó audio.")
+            
+        logging.error("Error al pronunciar cadena.")
+        logging.error(e)
+        
+        raise e
+        
