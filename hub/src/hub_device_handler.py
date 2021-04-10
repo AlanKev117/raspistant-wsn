@@ -40,7 +40,7 @@ def create_hub_device_handler(device_id):
         time.sleep(1)
         logging.info("Obteniendo datos del nodo sensor %s"%sensor_name)
         measure=client.get_sensor_reading(sensor_name.lower())
-        reproducirVoz("El sensor %s regresó la medición: %s"%(sensor_name,measure))
+        reproducir_voz("El sensor %s regresó la medición: %s"%(sensor_name,measure))
         logging.info("El sensor %s regresó la medición: %s"%(sensor_name,measure))
 
     # @hub_device_handler.command('action.devices.commands.OnOff')
