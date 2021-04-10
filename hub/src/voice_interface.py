@@ -20,7 +20,8 @@ def reproducir_voz(text, slow=False, lang="es"):
 
         audio_data = gTTS(text=text, lang=lang, slow=slow)
         audio_data.save(audio_path)
-        playsound(audio_path)
+        #playsound(audio_path)
+		subprocess.run(["omxplayer", audio_path])
         os.remove(audio_path)
 
     except Exception as e:
