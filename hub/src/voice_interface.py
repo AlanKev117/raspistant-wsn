@@ -1,6 +1,7 @@
 import logging
+import subprocess
 import os
-from playsound import playsound
+
 from gtts import gTTS
 
 
@@ -20,8 +21,11 @@ def reproducir_voz(text, slow=False, lang="es"):
 
         audio_data = gTTS(text=text, lang=lang, slow=slow)
         audio_data.save(audio_path)
-        #playsound(audio_path)
-		subprocess.run(["omxplayer", audio_path])
+        subprocess.run(["vlc", audio_path, "--play-and-exit"],
+                       stdout=subprocess.DEVNULL, 
+                       stderr=subprocess.DEVNULL,
+                       check=True,
+                       capture_output=False)
         os.remove(audio_path)
 
     except Exception as e:
