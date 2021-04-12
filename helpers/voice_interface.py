@@ -1,7 +1,7 @@
 import logging
 import subprocess
 import os
-
+import time
 from gtts import gTTS
 
 
@@ -24,8 +24,7 @@ def reproducir_voz(text, slow=False, lang="es"):
         subprocess.run(["vlc", audio_path, "--play-and-exit"],
                        stdout=subprocess.DEVNULL, 
                        stderr=subprocess.DEVNULL,
-                       check=True,
-                       capture_output=False)
+                       check=True)
         os.remove(audio_path)
 
     except Exception as e:
@@ -43,3 +42,13 @@ def reproducir_voz(text, slow=False, lang="es"):
         
         raise e
         
+def reproducir_audio(filename):
+    try:
+        subprocess.run(["vlc", filename, "--play-and-exit"],
+                       stdout=subprocess.DEVNULL, 
+                       stderr=subprocess.DEVNULL,
+                       check=True)
+    except Exception as e:
+        logging.error("Error al reproducir el archivo")
+        logging.error(e)
+        raise e

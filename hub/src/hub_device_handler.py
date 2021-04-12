@@ -1,10 +1,13 @@
 import logging
 import time
-
+import sys
+import pathlib
 from googlesamples.assistant.grpc import device_helpers
 
 from rpc_client import RPCClient
-from voice_interface import reproducir_voz
+PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent)
+sys.path.insert(1, PROJECT_DIR)
+from helpers.voice_interface import reproducir_voz
 
 client = RPCClient()
 

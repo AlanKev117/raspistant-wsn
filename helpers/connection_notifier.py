@@ -2,6 +2,7 @@ import socket
 import time
 import logging
 import subprocess
+from .voice_interface import reproducir_audio
 from gpiozero import LED
 
 
@@ -38,15 +39,13 @@ class ConnectionNotifier:
                 s.connect(('www.google.com', 80))
             except (socket.gaierror, socket.timeout):
                 logging.error("Sin conexion a internet")
+                if self.is_on:
+                    reproducir_audio("/tmp/desconectado.mp3")
                 self.is_on = False
             else:
+                if self.is_on == False:
+                    reproducir_audio("/tmp/conectado.mp3")
                 self.is_on = True
                 logging.info("Conectado a internet!")
             s.close()
-
-            # Actualizar estado de conexión.
-            #if self.is_on:
-                # Reproducir voz para notificar que si hay tamales
-            #else:
-                # Reproducir voz para notificar que no se puede no hay tortillas
             time.sleep(5)

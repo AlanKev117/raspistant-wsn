@@ -1,12 +1,16 @@
 import logging
-
+import sys
+import pathlib
 import click
-
+import threading
 try:
     from .hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
 except (SystemError, ImportError):
     from hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
 
+PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent)
+sys.path.insert(1, PROJECT_DIR)
+from helpers.connection_notifier import ConnectionNotifier
 
 @click.command()
 @click.option('--device-model-id', '--model',
@@ -36,7 +40,9 @@ except (SystemError, ImportError):
 def main(device_model_id, device_id, trigger, verbose):
 
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
-
+    conexion=ConnectionNotifier()
+    hilo_internet= threading.Thread(target=conexion.check_assistant_connection,daemon=True)
+    hilo_internet.start()
     try:
 
         with HubAssistant(device_model_id, device_id) as hub_assistant:
