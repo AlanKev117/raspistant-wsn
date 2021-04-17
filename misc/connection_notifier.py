@@ -46,21 +46,35 @@ class ConnectionNotifier:
             time.sleep(5)
 
     def check_assistant_connection(self):
+        
+        changed = False
+        first_time = True
         logging.info("Hilo de conexion a internet iniciado")
+        
         while True:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(5)
             try:
                 s.connect(('www.google.com', 80))
             except (socket.gaierror, socket.timeout):
-                logging.error("Sin conexion a internet")
-                if self.is_on:
-                    hablar(OFFLINE_MSG, cache="/tmp/desconectado.mp3")
+                changed = self.is_on
                 self.is_on = False
             else:
-                if not self.is_on:
-                    hablar(ONLINE_MSG, cache="/tmp/conectado.mp3")
+                changed = not self.is_on
                 self.is_on = True
-                logging.info("Conectado a internet!")
             s.close()
+
+
+            if first_time or changed:
+
+                if self.is_on:
+                    logging.info("Conectado a internet!")
+                    hablar(ONLINE_MSG, cache="/tmp/conectado.mp3")
+                else:
+                    logging.error("Sin conexion a internet")
+                    hablar(OFFLINE_MSG, cache="/tmp/desconectado.mp3")
+
+                first_time = False
+
             time.sleep(5)
+            
