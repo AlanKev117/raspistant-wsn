@@ -1,23 +1,19 @@
 import logging
 import threading
-import click
 import sys
 import pathlib
 
-from rpyc.utils.server import ThreadedServer 
+import click
+from rpyc.utils.server import ThreadedServer
 from rpyc.utils.helpers import classpartial
 from rpyc.utils.registry import UDPRegistryClient
 
-try:
-    from .node_service import SensorNodeService
-    from .sensor import *
-except (SystemError, ImportError):
-    from node_service import SensorNodeService
-    from sensor import *
+PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
+sys.path.append(PROJECT_DIR)
 
-PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent)
-sys.path.insert(1, PROJECT_DIR)
-from helpers.connection_notifier import ConnectionNotifier
+from sensor_node.src.node_service import SensorNodeService
+from sensor_node.src.sensor import Sensor, DummySensor, HallSensor, PIRSensor
+from misc.connection_notifier import ConnectionNotifier
 
 @click.command()
 @click.option('--sensor-name', default="aleatorio",
@@ -34,6 +30,7 @@ def main(sensor_name, sensor_type, server_port, verbose):
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
     sensor_node(sensor_name, sensor_type, server_port)
 
+
 def sensor_node(sensor_name, sensor_type, server_port):
     sensor_types = {
         "dummy": DummySensor,
@@ -44,14 +41,17 @@ def sensor_node(sensor_name, sensor_type, server_port):
     sensor = sensor_types[sensor_type](sensor_name)
     service = classpartial(SensorNodeService, sensor)
 
-    conexion=ConnectionNotifier()
-    hilo_internet= threading.Thread(target=conexion.check_sensor_node_connection,daemon=True)
+    conexion = ConnectionNotifier()
+    hilo_internet = threading.Thread(
+        target=conexion.check_sensor_node_connection, daemon=True)
     hilo_internet.start()
 
-    t = ThreadedServer(service, port=server_port, registrar=UDPRegistryClient(timeout=0))
+    t = ThreadedServer(service, port=server_port,
+                       registrar=UDPRegistryClient(timeout=0))
     logging.info(f"Nodo sensor {sensor_name} iniciado.")
     t.start()
     sensor.deactivate()
+
 
 if __name__ == "__main__":
     main()

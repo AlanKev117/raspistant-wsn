@@ -120,7 +120,9 @@
                         "desconecta el sensor $SchemaOrg_Text:sensor",
                         "desconectar el sensor $SchemaOrg_Text:sensor",
                         "olvida el sensor $SchemaOrg_Text:sensor",
-                        "olvidar el sensor $SchemaOrg_Text:sensor"
+                        "olvidar el sensor $SchemaOrg_Text:sensor",
+                        "olvida $SchemaOrg_Text:sensor",
+                        "olvidar $SchemaOrg_Text:sensor"
                     ]
                 }
             },
@@ -168,7 +170,9 @@
                         "consulta el sensor $SchemaOrg_Text:sensor",
                         "consulta el estado del sensor $SchemaOrg_Text:sensor",
                         "consultar el sensor $SchemaOrg_Text:sensor",
-                        "obtener medicion del sensor $SchemaOrg_Text:sensor"
+                        "obtener medicion del sensor $SchemaOrg_Text:sensor",
+                        "consulta $SchemaOrg_Text:sensor",
+                        "consultar $SchemaOrg_Text:sensor"
                     ]
                 }
             },

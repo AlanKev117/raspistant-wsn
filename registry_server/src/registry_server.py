@@ -6,21 +6,24 @@ from rpyc.lib import setup_logger
 import click
 
 @click.command()
-@click.option('--port', default=REGISTRY_PORT,
+@click.option('--port', '-p', default=REGISTRY_PORT,
             metavar='<puerto>', show_default=True,
             help='Puerto por el que el servidor recibe registros de servicios')
-@click.option('--pruning-timeout', default=DEFAULT_PRUNING_TIMEOUT,
+@click.option('--pruning-timeout', '-t', default=5,
             metavar='<segundos>', show_default=True,
-            help="""Tiempo que se mantiene registrado un servicio después de 
-                 que deja de enviar paquetes de registro o que se desactiva.""")
+            help=("Tiempo que se mantiene registrado un servicio después de "
+                  "estar inactivo."))
+@click.option('--verbose', '-v',
+              is_flag=True,
+              help="Se activa el modo verbose.")
 def main(port, pruning_timeout):
     registry_server(port, pruning_timeout)
 
-def registry_server(port, pruning_timeout):
-    print("Servidor de registro iniciado.")
+def registry_server(port, pruning_timeout, verbose):
+    logging.info("Servidor de registro iniciado.")
     server = UDPRegistryServer(port=port, pruning_timeout=pruning_timeout)
     # Muestra todos los logs, logger por defecto es stderr
-    setup_logger(False, None)
+    setup_logger(not verbose, None)
     server.start()
 
 if __name__ == "__main__":

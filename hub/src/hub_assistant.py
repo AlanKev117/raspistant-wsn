@@ -43,10 +43,7 @@ from googlesamples.assistant.grpc import (
     audio_helpers,
 )
 
-try:
-    from .hub_device_handler import create_hub_device_handler
-except (SystemError, ImportError):
-    from hub_device_handler import create_hub_device_handler
+from hub.src.hub_device_handler import create_hub_device_handler
 
 
 ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
