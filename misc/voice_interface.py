@@ -6,6 +6,9 @@ import pathlib
 
 from gtts import gTTS
 
+ONLINE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"online.mp3"
+OFFLINE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"offline.mp3"
+
 
 def generar_audio(audio_path, text, slow=False, lang="es"):
     try:
@@ -46,9 +49,9 @@ def hablar(text, slow=False, lang="es", cache=None):
 
         if not audio_path.exists():
             generar_audio(audio_path, text, slow=slow, lang=lang)
-        
+
         reproducir_audio(audio_path)
-        
+
         if not cache:
             audio_path.unlink()
 
@@ -57,3 +60,14 @@ def hablar(text, slow=False, lang="es", cache=None):
         logging.error("Error al pronunciar cadena.")
         logging.error(e)
         raise e
+
+
+if __name__ == "__main__":
+    offline_msg = ("No tengo conexión a internet. "
+                   "Revisa que todo esté en orden con tu módem y "
+                   "que hayas configurado los datos de red correctamente "
+                   "en el asistente.")
+
+    online_msg = ("Estoy en línea.")
+    generar_audio(OFFLINE_AUDIO_PATH, offline_msg)
+    generar_audio(ONLINE_AUDIO_PATH, online_msg)

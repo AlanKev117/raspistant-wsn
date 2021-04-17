@@ -2,18 +2,11 @@ import socket
 import time
 import logging
 import subprocess
-from .voice_interface import hablar
 from gpiozero import LED
 
+from misc.voice_interface import hablar, OFFLINE_AUDIO_PATH, ONLINE_AUDIO_PATH
+
 CONNECTION_LED_PIN = 18
-
-OFFLINE_MSG = ("No tengo conexión a internet. "
-               "Revisa que todo esté en orden con tu módem y "
-               "que hayas configurado los datos de red correctamente "
-               "en el asistente.")
-
-ONLINE_MSG = ("Estoy en línea. Puedes empezar a pronunciar "
-              "consultas de voz.")
 
 class ConnectionNotifier:
     def __init__(self):
@@ -69,10 +62,10 @@ class ConnectionNotifier:
 
                 if self.is_on:
                     logging.info("Conectado a internet!")
-                    hablar(ONLINE_MSG, cache="/tmp/conectado.mp3")
+                    hablar(text=None, cache=ONLINE_AUDIO_PATH)
                 else:
-                    logging.error("Sin conexion a internet")
-                    hablar(OFFLINE_MSG, cache="/tmp/desconectado.mp3")
+                    logging.error("Sin conexion a internet!")
+                    hablar(text=None, cache=OFFLINE_AUDIO_PATH)
 
                 first_time = False
 
