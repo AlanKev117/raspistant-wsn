@@ -16,14 +16,13 @@ import click
 @click.option('--verbose', '-v',
               is_flag=True,
               help="Se activa el modo verbose.")
-def main(port, pruning_timeout):
+def main(port, pruning_timeout, verbose):
+    logging.basicConfig(level=logging.DEBUG if verbose else logging.WARNING)
     registry_server(port, pruning_timeout)
 
-def registry_server(port, pruning_timeout, verbose):
+def registry_server(port, pruning_timeout):
     logging.info("Servidor de registro iniciado.")
     server = UDPRegistryServer(port=port, pruning_timeout=pruning_timeout)
-    # Muestra todos los logs, logger por defecto es stderr
-    setup_logger(not verbose, None)
     server.start()
 
 if __name__ == "__main__":
