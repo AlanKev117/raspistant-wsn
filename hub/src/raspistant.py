@@ -1,11 +1,15 @@
 import logging
-
+import sys
+import pathlib
 import click
+import threading
 
-try:
-    from .hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
-except (SystemError, ImportError):
-    from hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
+# Para uso de imports estáticos, añadimos la ruta del proyecto al sys path.
+PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
+sys.path.append(PROJECT_DIR)
+
+from misc.connection_notifier import ConnectionNotifier
+from hub.src.hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
 
 
 @click.command()
@@ -35,28 +39,40 @@ except (SystemError, ImportError):
               help='Verbose logging.')
 def main(device_model_id, device_id, trigger, verbose):
 
-    logging.basicConfig(level=logging.DEBUG if verbose else logging.WARNING)
+    # Configuración del logger.
+    logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
+
+    # Iniciamos detector de conexión a internet.
+    conexion = ConnectionNotifier()
+    hilo_internet = threading.Thread(
+        target=conexion.check_assistant_connection, daemon=True)
+    hilo_internet.start()
 
     try:
+
         with HubAssistant(device_model_id, device_id) as hub_assistant:
 
-            # Wait for trigger the first time.
+            # Esperamos por un detonador para la primer conversación.
             wait_for_trigger = True
 
-            # Assist loop
+            # Bucle de asistente.
             while True:
                 if wait_for_trigger:
                     if trigger == "keystroke":
                         click.pause(info=('Presiona una tecla para activar '
-                                        'el asistente...'))
+                                          'el asistente...'))
                     else:
                         print('Di "Ok, Google" para activar el asistente...')
                         hub_assistant.wait_for_hot_word("ok google")
                 keep_conversation = hub_assistant.assist()
-                # Wait for trigger if there is no follow-up turn in the conversation.
+                
+                # Esperar otro detonador si la conversación terminó
                 wait_for_trigger = not keep_conversation
-    except Exception:
+
+    except Exception as e:
         logging.error("Error en asistente.", stack_info=True)
+        logging.error(e)
+
 
 if __name__ == '__main__':
     main()

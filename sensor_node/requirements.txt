@@ -1,4 +1,0 @@
-rpyc==5.0.1
-gpiozero==1.6.2
-pytest==6.2.2
-click==7.1.2

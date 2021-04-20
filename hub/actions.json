@@ -7,57 +7,6 @@
     },
     "actions": [
         {
-            "name": "com.example.actions.BlinkLight",
-            "availability": {
-                "deviceClasses": [
-                    {
-                        "assistantSdkDevice": {}
-                    }
-                ]
-            },
-            "intent": {
-                "name": "com.example.intents.BlinkLight",
-                "parameters": [
-                    {
-                        "name": "number",
-                        "type": "SchemaOrg_Number"
-                    },
-                    {
-                        "name": "speed",
-                        "type": "Speed"
-                    }
-                ],
-                "trigger": {
-                    "queryPatterns": [
-                        "blink ($Speed:speed)? $SchemaOrg_Number:number times",
-                        "blink $SchemaOrg_Number:number times ($Speed:speed)?"
-                    ]
-                }
-            },
-            "fulfillment": {
-                "staticFulfillment": {
-                    "templatedResponse": {
-                        "items": [
-                            {
-                                "simpleResponse": {
-                                    "textToSpeech": "Blinking $number times"
-                                }
-                            },
-                            {
-                                "deviceExecution": {
-                                    "command": "com.example.commands.BlinkLight",
-                                    "params": {
-                                        "speed": "$speed",
-                                        "number": "$number"
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
-        },
-                {
             "name": "DESCUBRIMIENTO",
             "availability": {
                 "deviceClasses": [
@@ -92,7 +41,7 @@
                             },
                             {
                                 "deviceExecution": {
-                                    "command": "descubrirNodos",
+                                    "command": "descubrir_nodos",
                                     "params": {
                                     "nada": "$nada"
                                     }
@@ -138,9 +87,109 @@
                             },
                             {
                                 "deviceExecution": {
-                                    "command": "listarNodos",
+                                    "command": "listar_nodos",
                                     "params": {
                                     "nada": "$nada"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "DESCONEXION",
+            "availability": {
+                "deviceClasses": [
+                    {
+                        "assistantSdkDevice": {}
+                    }
+                ]
+            },
+            "intent": {
+                "name": "DESCONEXION",
+                "parameters": [
+                    {
+                        "name": "sensor",
+                        "type": "SchemaOrg_Text"
+                    }
+                ],
+                "trigger": {
+                    "queryPatterns": [
+                        "desconecta el sensor $SchemaOrg_Text:sensor",
+                        "desconectar el sensor $SchemaOrg_Text:sensor",
+                        "olvida el sensor $SchemaOrg_Text:sensor",
+                        "olvidar el sensor $SchemaOrg_Text:sensor",
+                        "olvida $SchemaOrg_Text:sensor",
+                        "olvidar $SchemaOrg_Text:sensor"
+                    ]
+                }
+            },
+            "fulfillment": {
+                "staticFulfillment": {
+                    "templatedResponse": {
+                        "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "Desconectando el sensor $sensor"
+                                }
+                            },
+                            {
+                                "deviceExecution": {
+                                    "command": "desconectar_nodo",
+                                    "params": {
+                                        "sensor_name":"$sensor"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "name": "CONSULTA",
+            "availability": {
+                "deviceClasses": [
+                    {
+                        "assistantSdkDevice": {}
+                    }
+                ]
+            },
+            "intent": {
+                "name": "CONSULTA",
+                "parameters": [
+                    {
+                        "name": "sensor",
+                        "type": "SchemaOrg_Text"
+                    }
+                ],
+                "trigger": {
+                    "queryPatterns": [
+                        "consulta el sensor $SchemaOrg_Text:sensor",
+                        "consulta el estado del sensor $SchemaOrg_Text:sensor",
+                        "consultar el sensor $SchemaOrg_Text:sensor",
+                        "obtener medicion del sensor $SchemaOrg_Text:sensor",
+                        "consulta $SchemaOrg_Text:sensor",
+                        "consultar $SchemaOrg_Text:sensor"
+                    ]
+                }
+            },
+            "fulfillment": {
+                "staticFulfillment": {
+                    "templatedResponse": {
+                        "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "Consultando el sensor $sensor"
+                                }
+                            },
+                            {
+                                "deviceExecution": {
+                                    "command": "consultar_nodo",
+                                    "params": {
+                                        "sensor_name":"$sensor"
                                     }
                                 }
                             }

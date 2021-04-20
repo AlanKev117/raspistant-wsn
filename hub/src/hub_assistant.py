@@ -43,10 +43,7 @@ from googlesamples.assistant.grpc import (
     audio_helpers,
 )
 
-try:
-    from .hub_device_handler import create_hub_device_handler
-except (SystemError, ImportError):
-    from hub_device_handler import create_hub_device_handler
+from hub.src.hub_device_handler import create_hub_device_handler
 
 
 ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
@@ -179,7 +176,7 @@ class HubAssistant(object):
 
         # Recognizer for trigger word.
         self.recognizer = sr.Recognizer()
-        self.recognizer.pause_threshold = 2
+        #self.recognizer.pause_threshold = 2
 
     def __enter__(self):
         return self
@@ -306,7 +303,7 @@ class HubAssistant(object):
                 text = self.recognizer.recognize_google(audio_data,
                                                         language="es-MX")
             except sr.UnknownValueError:
-                # self.recognizer.adjust_for_ambient_noise(source)
+                self.recognizer.adjust_for_ambient_noise(source)
                 print("Audio incorrecto. Intente de nuevo.")
 
             while hot_word.lower() not in text.lower():
@@ -317,5 +314,5 @@ class HubAssistant(object):
                     text = self.recognizer.recognize_google(audio_data,
                                                             language="es-MX")
                 except:
-                    # self.recognizer.adjust_for_ambient_noise(source)
+                    self.recognizer.adjust_for_ambient_noise(source)
                     print("Audio incorrecto. Intente de nuevo.")
