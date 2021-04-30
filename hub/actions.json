@@ -36,7 +36,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": "Descubriendo nodos sensores"
+                                    "textToSpeech": ""
                                 }
                             },
                             {
@@ -182,7 +182,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": "Consultando el sensor $sensor"
+                                    "textToSpeech": ""
                                 }
                             },
                             {

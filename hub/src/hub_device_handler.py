@@ -28,7 +28,7 @@ def create_hub_device_handler(device_id):
         lista = list(client.get_available_nodes().keys())
         logging.info(lista)
         for i in range(len(lista)):
-            logging.info("Nodo: %d %s" % (i+1, lista[i]))
+            logging.info("Nodo %d: %s" % (i+1, lista[i]))
             hablar("Nodo: %d %s" % (i+1, lista[i]))
             time.sleep(1)
 
@@ -41,9 +41,14 @@ def create_hub_device_handler(device_id):
     def consultar_nodo(sensor_name):
         time.sleep(1)
         logging.info("Obteniendo datos del nodo sensor %s" % sensor_name)
-        measure = client.get_sensor_reading(sensor_name.lower())
-        hablar("El sensor %s regresó la medición: %s" % (sensor_name, measure))
-        logging.info("El sensor %s regresó la medición: %s" %
-                     (sensor_name, measure))
+        try:
+            measure = client.get_sensor_reading(sensor_name.lower())
+            hablar("El sensor %s regresó la medición: %s" % (sensor_name, measure))
+            logging.info("El sensor %s regresó la medición: %s" %
+                        (sensor_name, measure))
+        except:
+            #Excepcion de que no existe la llave.
+            hablar("No me pude conectar con el sensor %s"%sensor_name)
+            
 
     return hub_device_handler

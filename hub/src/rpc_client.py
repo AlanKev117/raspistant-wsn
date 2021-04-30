@@ -21,6 +21,7 @@ class RPCClient:
             sensor_name = connection.root.get_sensor_name()
             connection.close()
             if sensor_name in self._available_nodes:
+                self._available_nodes.pop(sensor_name,None)
                 raise RepeatedNodeNameError(sensor_name)
             else:
                 self._available_nodes[sensor_name.lower()] = node
@@ -29,12 +30,16 @@ class RPCClient:
     def get_sensor_reading(self, sensor_name):
         ip, port = self._available_nodes[sensor_name]
         logging.info("Conectando a {}:{}".format(ip, port))
-
-        connection = rpyc.connect(ip, port)
-        reading = connection.root.get_sensor_reading()
-        connection.close()
-        return reading
-
+        try:
+            connection = rpyc.connect(ip, port)
+            reading = connection.root.get_sensor_reading()
+            connection.close()
+            return reading
+        except:
+            return "READING_ERROR"
+        
+        
+        
     def get_available_nodes(self):
         return self._available_nodes
 
