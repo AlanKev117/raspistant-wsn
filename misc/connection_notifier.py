@@ -6,7 +6,7 @@ from gpiozero import LED
 
 from misc.voice_interface import hablar, OFFLINE_AUDIO_PATH, ONLINE_AUDIO_PATH
 
-CONNECTION_LED_PIN = 18
+CONNECTION_LED_PIN = 25
 
 class ConnectionNotifier:
     def __init__(self):
