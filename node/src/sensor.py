@@ -41,7 +41,7 @@ class DummySensor(Sensor):
         return self.name
 
     def get_type(self):
-        return DummySensor
+        return "DummySensor"
 
     def deactivate(self):
         pass
@@ -60,7 +60,7 @@ class PIRSensor(Sensor):
         return self.name
 
     def get_type(self):
-        return PIRSensor
+        return "PIRSensor"
 
     def deactivate(self):
         self.pir_sensor.close()
@@ -78,7 +78,7 @@ class HallSensor(Sensor):
         return self.name
 
     def get_type(self):
-        return HallSensor
+        return "HallSensor"
 
     def deactivate(self):
         self.hall_sensor.close()

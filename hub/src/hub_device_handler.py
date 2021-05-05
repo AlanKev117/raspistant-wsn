@@ -7,8 +7,6 @@ from googlesamples.assistant.grpc import device_helpers
 
 from hub.src.rpc_client import RPCClient
 from misc.voice_interface import hablar
-from node.src.sensor import DummySensor, PIRSensor, HallSensor
-
 
 def create_hub_device_handler(device_id):
 
@@ -62,10 +60,10 @@ def create_hub_device_handler(device_id):
         try:
             measurement, sensor_type = client.get_sensor_reading(
                 sensor_name.lower())
-            if sensor_type == HallSensor:
+            if sensor_type == "HallSensor":
                 state = "cerrado" if measurement == True else "abierto"
                 res = f"El estado de {sensor_name} es: {state}"
-            elif sensor_type == PIRSensor:
+            elif sensor_type == "PIRSensor":
                 state = "con movimiento" if measurement == True else "quieto"
                 res = f"El estado de {sensor_name} es: {state}"
             else:
@@ -76,7 +74,7 @@ def create_hub_device_handler(device_id):
 
         except:
             # No existe la llave o fue imposible conectarse.
-            logging.error(f"Imposible conectarse con {sensor_name}")
+            logging.error(f"Imposible conectarse con {sensor_name}", stack_info=True)
             hablar(f"Lo siento, no me pude conectar con el nodo {sensor_name}")
 
     return hub_device_handler
