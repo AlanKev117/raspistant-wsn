@@ -18,7 +18,10 @@ class SensorNodeService(rpyc.Service):
         pass
 
     def exposed_get_sensor_reading(self):
-        return self.sensor.get_measurement()
+        return self.sensor.get_reading()
+    
+    def exposed_get_sensor_type(self):
+        return self.sensor.get_type()
 
     def exposed_get_sensor_name(self):
         return self.sensor.get_name()

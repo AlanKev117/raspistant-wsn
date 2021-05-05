@@ -82,7 +82,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": "Listando nodos sensores"
+                                    "textToSpeech": ""
                                 }
                             },
                             {
