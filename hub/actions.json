@@ -167,12 +167,8 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "consulta el sensor $SchemaOrg_Text:sensor",
-                        "consulta el estado del sensor $SchemaOrg_Text:sensor",
-                        "consultar el sensor $SchemaOrg_Text:sensor",
-                        "obtener medicion del sensor $SchemaOrg_Text:sensor",
-                        "consulta $SchemaOrg_Text:sensor",
-                        "consultar $SchemaOrg_Text:sensor"
+                        "obtener medicion de $SchemaOrg_Text:sensor",
+                        "consultar sensor $SchemaOrg_Text:sensor"
                     ]
                 }
             },
