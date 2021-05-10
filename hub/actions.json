@@ -118,11 +118,7 @@
                 "trigger": {
                     "queryPatterns": [
                         "desconecta el sensor $SchemaOrg_Text:sensor",
-                        "desconectar el sensor $SchemaOrg_Text:sensor",
-                        "olvida el sensor $SchemaOrg_Text:sensor",
-                        "olvidar el sensor $SchemaOrg_Text:sensor",
-                        "olvida $SchemaOrg_Text:sensor",
-                        "olvidar $SchemaOrg_Text:sensor"
+                        "olvidar nodo $SchemaOrg_Text:sensor"
                     ]
                 }
             },
