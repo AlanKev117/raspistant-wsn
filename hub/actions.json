@@ -117,8 +117,8 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "desconecta el sensor $SchemaOrg_Text:sensor",
-                        "olvidar nodo $SchemaOrg_Text:sensor"
+                        "desconectar el nodo $SchemaOrg_Text:sensor",
+                        "olvida nodo $SchemaOrg_Text:sensor"
                     ]
                 }
             },
@@ -128,7 +128,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": "Desconectando el sensor $sensor"
+                                    "textToSpeech": "Nodo $sensor olvidado"
                                 }
                             },
                             {
@@ -163,8 +163,8 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "obtener medicion de $SchemaOrg_Text:sensor",
-                        "consultar sensor $SchemaOrg_Text:sensor"
+                        "obtener estado de $SchemaOrg_Text:sensor",
+                        "consulta el nodo $SchemaOrg_Text:sensor"
                     ]
                 }
             },

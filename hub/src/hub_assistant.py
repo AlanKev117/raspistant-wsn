@@ -20,10 +20,7 @@ import json
 import logging
 import os
 import os.path
-import pathlib2 as pathlib
 import sys
-import time
-import uuid
 
 import click
 import grpc

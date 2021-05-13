@@ -17,13 +17,13 @@ from node.src.node_service import SensorNodeService
 from node.src.sensor import Sensor, DummySensor, HallSensor, PIRSensor
 
 @click.command()
-@click.option('--sensor-name', default="aleatorio",
+@click.option('--name', default="aleatorio",
               metavar='<nombre del sensor>', show_default=True,
               help='Nombre con el que se llamará al nodo desde el asistente')
-@click.option('--sensor-type', default="dummy",
+@click.option('--type', default="dummy",
               metavar='<tipo de sensor>', show_default=True,
               help='Tipo de sensor que se conectará al nodo.')
-@click.option('--server-port', default=18861,
+@click.option('--port', default=18861,
               metavar='<puerto>', show_default=True,
               help='Puerto por el que el nodo recibe peticiones de medición')
 @click.option('--verbose', '-v', is_flag=True, help='Modo verbose')

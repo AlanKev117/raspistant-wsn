@@ -1,9 +1,8 @@
 import logging
 import subprocess
-import os
-import time
 import pathlib
 
+# Import audio synthesis library if device is online
 try:
     from gtts import gTTS
 except:
@@ -11,9 +10,26 @@ except:
 
 ONLINE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"online.mp3"
 OFFLINE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"offline.mp3"
+UPDATE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"update.mp3"
+TELL_ME_PATH = pathlib.Path(__file__).parent/"assets"/"tellme.mp3"
 
 
 def generar_audio(audio_path, text, slow=False, lang="es"):
+    """Sintetiza un archivo de audio con el contenido, idioma y velocidad
+    requeridas utilizando el servicio de síntesis de voz de Google.
+
+    Args:
+        audio_path: La ruta destino del archivo de audio sintetizado
+        text: Contenido de texto a sintetizar
+        slow: Indica si el audio debería guardar una reproducción lenta
+            del contenido
+        lang: Código del idioma en el que se sintetizará el audio requerido
+
+    Raises:
+        gTTSError: Si hubo un error en la petición al servidor de síntesis
+        FileNotFoundError: Si la ruta del archivo destino no puede ser accedida
+
+    """
     try:
         audio_data = gTTS(text=text, lang=lang, slow=slow)
         audio_data.save(audio_path)
@@ -24,12 +40,26 @@ def generar_audio(audio_path, text, slow=False, lang="es"):
 
 
 def reproducir_audio(audio_path):
+    """Reproduce un audio encontrado en la ruta proporcionada
+    invocando el reproductor vlc.
+
+    Args:
+        audio_path: La ruta al archivo de audio a reproducir
+
+    Raises:
+        FileNotFoundError: Si el archivo de audio o el comando vlc 
+            no se encuentran
+    """
     try:
-        subprocess.run(["vlc", audio_path, "--play-and-exit"],
-                       stdout=subprocess.DEVNULL,
-                       stderr=subprocess.DEVNULL,
-                       check=True)
-    except Exception as e:
+        audio_file = pathlib.Path(audio_path)
+        if audio_file.exists():
+            subprocess.run(["cvlc", audio_path, "--play-and-exit"],
+                           stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL,
+                           check=True)
+        else:
+            raise FileNotFoundError("Archivo de audio no encontrado")
+    except FileNotFoundError as e:
         logging.error("Error al reproducir audio.")
         logging.error(e)
         raise e
@@ -43,7 +73,14 @@ def hablar(text, slow=False, lang="es", cache=None):
         slow: indica si se debe prounciar lento o no.
         lang: código del idioma en el que la cadena está escrita.
         cache: indica la ruta para guardar el audio para ser usado de nuevo
-            en un futuro.
+            sin conexión en un futuro.
+
+    Raises:
+        FileNotFoundError: Si el archivo de audio a reproducir o el comando vlc 
+            no se encuentran o si la ruta del archivo destino no puede ser 
+            accedida al sintetizar audio
+        gTTSError: Si hubo un error en la petición al servidor de síntesis al
+            sintetizar audio
     """
 
     audio_path = cache or "/tmp/assistant_audio.mp3"
@@ -72,5 +109,12 @@ if __name__ == "__main__":
                    "en el asistente.")
 
     online_msg = ("Estoy en línea.")
+    update_msg = ("No pude conectarme con el servicio de "
+                  "asistencia de voz. Autentifica tu "
+                  "dispositivo de nuevo e intenta de nuevo")
+    tellme_msg = "dime"
+    
     generar_audio(OFFLINE_AUDIO_PATH, offline_msg)
     generar_audio(ONLINE_AUDIO_PATH, online_msg)
+    generar_audio(UPDATE_AUDIO_PATH, update_msg)
+    generar_audio(TELL_ME_PATH, tellme_msg)

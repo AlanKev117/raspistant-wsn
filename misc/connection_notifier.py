@@ -2,21 +2,27 @@ import socket
 import time
 import logging
 import subprocess
-from gpiozero import LED
+
+# Import grpiozero if required by sensor node only
+try:
+    from gpiozero import LED
+except:
+    pass
 
 from misc.voice_interface import hablar, OFFLINE_AUDIO_PATH, ONLINE_AUDIO_PATH
 
 CONNECTION_LED_PIN = 25
+
 
 class ConnectionNotifier:
     def __init__(self):
         self.is_on = False
 
     def check_sensor_node_connection(self):
-        
+
         logging.info("Hilo de conexion a internet iniciado")
         led = LED(CONNECTION_LED_PIN)
-        
+
         while True:
             ip = subprocess.check_output("hostname -I",
                                          stderr=subprocess.STDOUT,
@@ -27,23 +33,23 @@ class ConnectionNotifier:
             else:
                 logging.info("Conectado a internet!")
                 self.is_on = True
-            
+
             # Actualizar estado del led.
             if self.is_on:
-            	#print("Encendido")
+                # print("Encendido")
                 led.on()
             else:
-            	#print("Apagado")
+                # print("Apagado")
                 led.off()
-            
+
             time.sleep(5)
 
     def check_assistant_connection(self):
-        
+
         changed = False
         first_time = True
         logging.info("Hilo de conexion a internet iniciado")
-        
+
         while True:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(5)
@@ -57,7 +63,6 @@ class ConnectionNotifier:
                 self.is_on = True
             s.close()
 
-
             if first_time or changed:
 
                 if self.is_on:
@@ -70,4 +75,3 @@ class ConnectionNotifier:
                 first_time = False
 
             time.sleep(5)
-            

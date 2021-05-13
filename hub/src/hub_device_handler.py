@@ -1,7 +1,5 @@
 import logging
 import time
-import sys
-import pathlib
 
 from googlesamples.assistant.grpc import device_helpers
 
@@ -74,7 +72,7 @@ def create_hub_device_handler(device_id):
 
         except:
             # No existe la llave o fue imposible conectarse.
-            logging.error(f"Imposible conectarse con {sensor_name}", stack_info=True)
+            logging.error(f"Imposible conectarse con {sensor_name}")
             hablar(f"Lo siento, no me pude conectar con el nodo {sensor_name}")
 
     return hub_device_handler
