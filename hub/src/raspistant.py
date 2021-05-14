@@ -35,11 +35,16 @@ from hub.src.hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
               help=(('Palabra clave para activar el asistente. '
                      'Si no se especifica, la activación se da '
                      'presionando una tecla')))
+@click.option('--timeout', default=65,
+              type=click.IntRange(5, 365, clamp=True),
+              metavar='<segundos>', show_default=True,
+              help=('Intervalo de tiempo en segundos que el asistente '
+                    'recordará un nodo que se acaba de registrar.'))
 @click.option('--verbose', '-v',
               is_flag=True,
               default=False,
               help='Verbose logging.')
-def main(device_model_id, device_id, trigger_word, verbose):
+def main(device_model_id, device_id, trigger_word, timeout, verbose):
 
     # Configuración del logger.
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
@@ -51,7 +56,7 @@ def main(device_model_id, device_id, trigger_word, verbose):
 
     # Iniciamos servidor de registro
     rs_process = threading.Thread(target=registry_server,
-                                  args=(18811, 5),
+                                  args=(18811, timeout),
                                   daemon=True)
     rs_process.start()
 

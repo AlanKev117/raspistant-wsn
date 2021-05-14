@@ -26,10 +26,11 @@ from node.src.sensor import DummySensor, HallSensor, PIRSensor
               metavar='<puerto>', show_default=True,
               help='Puerto por el que el nodo recibe peticiones de medición')
 @click.option('--timeout', default=1,
-              type=click.IntRange(0, 15, clamp=True),
+              type=click.IntRange(0, 6, clamp=True),
               metavar='<minutos>', show_default=True,
               help=('Intervalo de tiempo en minutos que el nodo pasará sin '
-                    'registrarse en el asistente de voz. Si es 0, '))
+                    'registrarse en el asistente de voz. Si es 0, el nodo '
+                    'intentará registrarse múltiples veces por segundo.'))
 @click.option('--verbose', '-v', is_flag=True, help='Modo verbose')
 def main(node_name, sensor_type, port, timeout, verbose):
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
