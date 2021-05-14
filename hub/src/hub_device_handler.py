@@ -48,15 +48,24 @@ def create_hub_device_handler(device_id):
     @hub_device_handler.command('listar_nodos')
     def listar_nodos(nada):
         logging.info("Listando nodos sensores disponibles")
-        time.sleep(1)
+
         lista = list(client.get_available_nodes().keys())
-        logging.info(lista)
-        for i in range(len(lista)):
-            logging.info("Nodo %d: %s" % (i+1, lista[i]))
-            hablar("Nodo %d: %s" % (i+1, lista[i]))
-            time.sleep(1)
-        if len(lista) == 0:
+        cantidad_lista = len(lista)
+        
+        # Notificación de nodos a listar
+        if cantidad_lista == 0:
+            logging.info("Sin nodos sensores guardados")
             hablar("No tengo nodos sensores guardados")
+        else:
+            logging.info(f"Nodos a listar: {lista}")
+            articulo = "un" if cantidad_lista == 1 else f"{cantidad_lista}"
+            nodo_palabra = "nodo" if cantidad_lista == 1 else "nodos"
+            hablar(f"Listando {articulo} {nodo_palabra}.")
+            for i in range(cantidad_lista):
+                time.sleep(1)
+                logging.info("Nodo %d: %s" % (i+1, lista[i]))
+                hablar("Nodo %d: %s" % (i+1, lista[i]))
+        
 
     @hub_device_handler.command('desconectar_nodo')
     def desconectar_nodo(sensor_name):
@@ -70,8 +79,10 @@ def create_hub_device_handler(device_id):
 
     @hub_device_handler.command('consultar_nodo')
     def consultar_nodo(sensor_name):
+        
         time.sleep(1)
         logging.info("Obteniendo datos del nodo sensor %s" % sensor_name)
+
         try:
             measurement, sensor_type = client.get_sensor_reading(
                 sensor_name.lower())
