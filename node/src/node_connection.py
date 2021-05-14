@@ -6,9 +6,9 @@ from gpiozero import LED
 
 CONNECTION_LED_PIN = 25
 
-def check_node_connection(self):
+def check_node_connection():
     
-    self.is_on = False
+    connected = False
 
     logging.info("Hilo de conexion a internet iniciado")
     led = LED(CONNECTION_LED_PIN)
@@ -19,13 +19,13 @@ def check_node_connection(self):
                                         shell=True).decode()
         if ip == "\n":
             logging.error("Sin conexion a internet")
-            self.is_on = False
+            connected = False
         else:
             logging.info("Conectado a internet!")
-            self.is_on = True
+            connected = True
 
         # Actualizar estado del led.
-        if self.is_on:
+        if connected:
             led.on()
         else:
             led.off()

@@ -4,7 +4,7 @@ import logging
 
 from hub.src.voice_interface import hablar, OFFLINE_AUDIO_PATH, ONLINE_AUDIO_PATH
 
-def check_assistant_connection(self):
+def check_assistant_connection():
 
     connected = False
     changed = False
