@@ -14,18 +14,35 @@ def create_hub_device_handler(device_id):
 
     @hub_device_handler.command('descubrir_nodos')
     def descubrir_nodos(nada):
+
         logging.info("Descubriendo nodos sensores.")
+        
         nodos, repetidos = client.discover_sensor_nodes()
-        logging.info("Se encontraron %d nodos" % len(nodos))
-        hablar("Se encontraron %d nodos" % len(nodos))
+        
+        # Notificar cantidad de nodos
+        cantidad_nodos = len(nodos)
+        if cantidad_nodos == 1:
+            nodos_msg = "Se encontró un nodo"
+        else:
+            nodos_msg = "Se encontraron %d nodos" % cantidad_nodos
+        logging.info(nodos_msg)
+        hablar(nodos_msg)
+        
+        # Manejo de nodos con nombre repetido
         cantidad_repetidos = len(repetidos)
-        logging.info(f"Se encontraron {cantidad_repetidos} nodos repetidos")
         if cantidad_repetidos > 0:
+            # Manejo de singular
+            ese, articulo = "s", "los"
+            if cantidad_repetidos == 1:
+                ese, articulo = "", "el"
+
             nombres_repetidos = ", ".join(repetidos)
-            repetidos_msg = (f"Encontré los siguientes nodos repetidos: "
-                             f"{nombres_repetidos}. "
-                             f"Corrige el nombre de los nodos e intenta "
-                             f"descubrirlos de nuevo")
+            repetidos_msg = (f"Encontré {articulo} siguiente{ese} nodo{ese} "
+                             f"repetido{ese}: {nombres_repetidos}. "
+                             f"Asegúrate de que todos los nodos tengan un "
+                             f"nombre distinto entre ellos e intenta "
+                             f"descubrirlos de nuevo.")
+            logging.warning(repetidos_msg)
             hablar(repetidos_msg)
 
     @hub_device_handler.command('listar_nodos')
