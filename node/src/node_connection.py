@@ -23,19 +23,19 @@ def check_node_connection():
         if ip == "\n":
             changed = connected
             connected = False
-            led.off()
         else:
             changed = not connected
             connected = True
-            led.on()
 
-        # Actualiza log de estado de conexión.
+        # Actualiza indicadores de conexión
         if first_time or changed:
             
             if connected:
                 logging.info("Conectado a internet!")
+                led.on()
             else:
                 logging.error("Sin conexion a internet")
+                led.off()
             
             first_time = False
 

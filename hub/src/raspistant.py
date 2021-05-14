@@ -5,7 +5,7 @@ import threading
 
 import click
 
-# Append project path to PATH for following absolute imports work
+# Ruta del proyecto agregada a PATH para imports estáticos
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
 sys.path.append(PROJECT_DIR)
 
@@ -50,9 +50,9 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
 
     # Iniciamos detector de conexión a internet.
-    hilo_internet = threading.Thread(
-        target=check_assistant_connection, daemon=True)
-    hilo_internet.start()
+    conn_thread = threading.Thread(target=check_assistant_connection, 
+                                   daemon=True)
+    conn_thread.start()
 
     # Iniciamos servidor de registro
     rs_process = threading.Thread(target=registry_server,

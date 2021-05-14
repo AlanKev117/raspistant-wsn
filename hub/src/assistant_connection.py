@@ -25,6 +25,7 @@ def check_assistant_connection():
             connected = True
         s.close()
 
+        # Actualiza indicadores de conexión
         if first_time or changed:
 
             if connected:
