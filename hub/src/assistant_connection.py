@@ -12,9 +12,12 @@ def check_assistant_connection(status):
     changed = False
     first_time = True
 
-    time.sleep(3)
-
     while True:
+        
+        # Tiempo de polling e inicio de espera para systemd
+        time.sleep(5)
+
+        # Polling de conexión a internet
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(5)
         try:
@@ -41,4 +44,4 @@ def check_assistant_connection(status):
 
             first_time = False
 
-        time.sleep(5)
+        
