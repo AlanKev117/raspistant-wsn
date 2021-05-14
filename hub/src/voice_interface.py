@@ -53,7 +53,10 @@ def reproducir_audio(audio_path):
     try:
         audio_file = pathlib.Path(audio_path)
         if audio_file.exists():
-            subprocess.run(['cvlc', audio_file, '--play-and-exit'])
+            subprocess.run(["cvlc", audio_file, "--play-and-exit"],
+                           stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL,
+                           check=True)
         else:
             raise FileNotFoundError("Archivo de audio no encontrado")
     except FileNotFoundError as e:
