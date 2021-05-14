@@ -12,6 +12,8 @@ def check_assistant_connection(status):
     changed = False
     first_time = True
 
+    time.sleep(3)
+
     while True:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(5)
