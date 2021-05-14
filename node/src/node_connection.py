@@ -36,10 +36,10 @@ def check_node_connection():
         if first_time or changed:
 
             if connected:
-                logging.info("Conectado a internet!")
+                logging.info("Conectado a la red local!")
                 led.on()
             else:
-                logging.error("Sin conexion a internet")
+                logging.error("Sin conexion a la red local")
                 led.off()
 
             first_time = False
