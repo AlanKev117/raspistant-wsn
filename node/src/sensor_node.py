@@ -31,23 +31,23 @@ def main(sensor_name, sensor_type, server_port, verbose):
     sensor_node_process(sensor_name, sensor_type, server_port)
 
 
-def sensor_node_process(sensor_name, sensor_type, server_port):
+def sensor_node_process(name, type, port):
     sensor_types = {
         "dummy": DummySensor,
         "pir": PIRSensor,
         "hall": HallSensor
     }
 
-    sensor = sensor_types[sensor_type](sensor_name)
+    sensor = sensor_types[type](name)
     service = classpartial(SensorNodeService, sensor)
 
     hilo_internet = threading.Thread(
         target=check_node_connection, daemon=True)
     hilo_internet.start()
 
-    t = ThreadedServer(service, port=server_port,
+    t = ThreadedServer(service, port=port,
                        registrar=UDPRegistryClient(timeout=0))
-    logging.info(f"Nodo sensor {sensor_name} iniciado.")
+    logging.info(f"Nodo sensor {name} iniciado.")
     t.start()
     sensor.deactivate()
 
