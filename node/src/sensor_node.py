@@ -33,7 +33,7 @@ from node.src.sensor import DummySensor, HallSensor, PIRSensor
 @click.option('--verbose', '-v', is_flag=True, help='Modo verbose')
 def main(node_name, sensor_type, port, timeout, verbose):
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
-    sensor_node_process(node_name, sensor_type, port)
+    sensor_node_process(node_name, sensor_type, port, timeout)
 
 
 def sensor_node_process(node_name, sensor_type, port, timeout):
@@ -51,7 +51,7 @@ def sensor_node_process(node_name, sensor_type, port, timeout):
     hilo_internet.start()
 
     t = ThreadedServer(service, port=port,
-                       registrar=UDPRegistryClient(timeout=1))
+                       registrar=UDPRegistryClient(timeout=timeout))
     logging.info(f"Nodo sensor {node_name} iniciado.")
     t.start()
     sensor.deactivate()
