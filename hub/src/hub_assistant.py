@@ -42,7 +42,7 @@ from googlesamples.assistant.grpc import (
 )
 
 from hub.src.hub_device_handler import create_hub_device_handler
-from hub.src.voice_interface import UPDATE_AUDIO_PATH, hablar
+from hub.src.voice_interface import SERVICE_AUDIO_PATH, hablar
 
 ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
 END_OF_UTTERANCE = embedded_assistant_pb2.AssistResponse.END_OF_UTTERANCE
@@ -92,7 +92,7 @@ def create_grpc_channel():
         logging.error('Error loading credentials: %s', e)
         logging.error('Run google-oauthlib-tool to initialize '
                       'new OAuth 2.0 credentials.')
-        hablar(text=None, cache=UPDATE_AUDIO_PATH)
+        hablar(text=None, cache=SERVICE_AUDIO_PATH)
         sys.exit(-1)
 
     # Create an authorized gRPC channel.

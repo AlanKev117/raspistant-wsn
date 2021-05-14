@@ -10,7 +10,7 @@ PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
 sys.path.append(PROJECT_DIR)
 
 from hub.src.assistant_connection import check_assistant_connection
-from hub.src.voice_interface import hablar, TELL_ME_PATH
+from hub.src.voice_interface import hablar, TELLME_AUDIO_PATH
 from hub.src.registry_server import registry_server
 from hub.src.hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
 
@@ -49,8 +49,11 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
     # Configuración del logger.
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
 
+    status = {"online": False}
+
     # Iniciamos detector de conexión a internet.
-    conn_thread = threading.Thread(target=check_assistant_connection, 
+    conn_thread = threading.Thread(target=check_assistant_connection,
+                                   args=(status, ),
                                    daemon=True)
     conn_thread.start()
 
@@ -59,6 +62,9 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
                                   args=(18811, timeout),
                                   daemon=True)
     rs_process.start()
+
+    while not status["online"]:
+        pass
 
     try:
 
@@ -77,7 +83,7 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
                     else:
                         print(f'Di "{trigger_word}" para activar el asistente...')
                         hub_assistant.wait_for_hot_word(trigger_word)
-                    hablar(text=None, cache=TELL_ME_PATH)
+                    hablar(text=None, cache=TELLME_AUDIO_PATH)
 
                 keep_conversation = hub_assistant.assist()
 
