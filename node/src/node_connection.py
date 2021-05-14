@@ -7,9 +7,14 @@ from gpiozero import LED
 CONNECTION_LED_PIN = 25
 
 
-def check_node_connection():
+def check_node_connection(status, verbose):
 
-    logging.info("Hilo de conexion a red local iniciado")
+    logger = logging.getLogger("NODE_CONNECTION")
+    h = logging.StreamHandler()
+    f = logging.Formatter("%(levelname)s:%(name)s:%(msg)s")
+    h.setFormatter(f)
+    logger.addHandler(h)
+    logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
     connected = False
     changed = False
@@ -36,10 +41,12 @@ def check_node_connection():
         if first_time or changed:
 
             if connected:
-                logging.info("Conectado a la red local!")
+                logger.info("Conectado a la red local!")
+                status["online"] = True
                 led.on()
             else:
-                logging.error("Sin conexion a la red local")
+                logger.error("Sin conexion a la red local")
+                status["online"] = False
                 led.off()
 
             first_time = False

@@ -4,9 +4,14 @@ import logging
 
 from hub.src.voice_interface import hablar, OFFLINE_AUDIO_PATH, ONLINE_AUDIO_PATH
 
-def check_assistant_connection(status):
+def check_assistant_connection(status, verbose):
 
-    logging.info("Hilo de conexion a internet iniciado")
+    logger = logging.getLogger("ASSISTANT_CONNECTION")
+    h = logging.StreamHandler()
+    f = logging.Formatter("%(levelname)s:%(name)s:%(msg)s")
+    h.setFormatter(f)
+    logger.addHandler(h)
+    logger.setLevel(logging.INFO if verbose else logging.WARNING)
     
     connected = False
     changed = False
@@ -34,11 +39,11 @@ def check_assistant_connection(status):
         if first_time or changed:
 
             if connected:
-                logging.info("Conectado a internet!")
+                logger.info("Conectado a internet!")
                 status["online"] = True
                 hablar(text=None, cache=ONLINE_AUDIO_PATH)
             else:
-                logging.error("Sin conexion a internet!")
+                logger.error("Sin conexion a internet!")
                 status["online"] = False
                 hablar(text=None, cache=OFFLINE_AUDIO_PATH)
 

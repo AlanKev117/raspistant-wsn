@@ -40,10 +40,12 @@ from hub.src.hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
               metavar='<segundos>', show_default=True,
               help=('Intervalo de tiempo en segundos que el asistente '
                     'recordará un nodo que se acaba de registrar.'))
-@click.option('--verbose', '-v',
-              is_flag=True,
-              default=False,
-              help='Verbose logging.')
+@click.option('-v', '--verbose', 
+              count=True, metavar="<-v * n veces>", 
+              help=("Bandera que define el comportamiento de los logs."
+                    "Mientras más repeticiones, se muestran más logs:\n"
+                    "ninguna, sin logs; una, logs de asistente; dos o más, "
+                    "logs de asistente y conexión."))
 def main(device_model_id, device_id, trigger_word, timeout, verbose):
 
     # Configuración del logger.
@@ -53,15 +55,19 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
 
     # Iniciamos detector de conexión a internet.
     conn_thread = threading.Thread(target=check_assistant_connection,
-                                   args=(status, ),
+                                   args=(status, verbose >= 2),
                                    daemon=True)
     conn_thread.start()
 
+    logging.info("Hilo de conexión a internet iniciado.")
+
     # Iniciamos servidor de registro
     rs_process = threading.Thread(target=registry_server,
-                                  args=(18811, timeout),
+                                  args=(18811, timeout, verbose >= 2),
                                   daemon=True)
     rs_process.start()
+
+    logging.info("Hilo de servidor de registro iniciado.")
 
     while not status["online"]:
         pass

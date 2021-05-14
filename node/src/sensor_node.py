@@ -1,4 +1,5 @@
 import logging
+from os import stat
 import threading
 import sys
 import pathlib
@@ -33,11 +34,13 @@ from node.src.sensor import DummySensor, HallSensor, PIRSensor
                     'intentará registrarse múltiples veces por segundo.'))
 @click.option('--verbose', '-v', is_flag=True, help='Modo verbose')
 def main(node_name, sensor_type, port, timeout, verbose):
+    sensor_node_process(node_name, sensor_type, port, timeout, verbose)
+
+
+def sensor_node_process(node_name, sensor_type, port, timeout, verbose):
+    
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
-    sensor_node_process(node_name, sensor_type, port, timeout)
-
-
-def sensor_node_process(node_name, sensor_type, port, timeout):
+    
     sensor_types = {
         "dummy": DummySensor,
         "pir": PIRSensor,
@@ -45,16 +48,28 @@ def sensor_node_process(node_name, sensor_type, port, timeout):
     }
 
     sensor = sensor_types[sensor_type](node_name)
-    service = classpartial(SensorNodeService, sensor)
+    service = classpartial(SensorNodeService, sensor, verbose)
+    status = {"online": False}
 
-    hilo_internet = threading.Thread(
-        target=check_node_connection, daemon=True)
-    hilo_internet.start()
 
-    t = ThreadedServer(service, port=port,
+    # Hilo de conexión
+    conn_thread = threading.Thread(target=check_node_connection, 
+                                   args=(status, verbose), 
+                                   daemon=True)
+    conn_thread.start()
+    logging.info(f"Hilo de detección de conexión a red local iniciado.")
+
+    while not status["online"]:
+        pass
+
+    # Hilo de servicio de medición
+    t = ThreadedServer(service, 
+                       port=port,
                        registrar=UDPRegistryClient(timeout=timeout))
-    logging.info(f"Nodo sensor {node_name} iniciado.")
     t.start()
+    logging.info(f"Hilo de servicio de medición iniciado.")
+
+    # Desactiva pin de entrada de sensor
     sensor.deactivate()
 
 

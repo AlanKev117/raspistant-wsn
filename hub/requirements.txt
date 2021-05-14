@@ -10,4 +10,3 @@ SpeechRecognition==3.8.1
 click==7.1.2
 rpyc==5.0.1
 gTTS==2.2.2
-python-vlc==3.0.12118
