@@ -1,8 +1,8 @@
 import logging
-import subprocess
 import pathlib
 
 from gtts import gTTS
+from vlc import MediaPlayer
 
 ONLINE_AUDIO_PATH = pathlib.Path(__file__).parent.parent/"assets"/"online.mp3"
 OFFLINE_AUDIO_PATH = pathlib.Path(__file__).parent.parent/"assets"/"offline.mp3"
@@ -37,7 +37,7 @@ def generar_audio(audio_path, text, slow=False, lang="es"):
 
 def reproducir_audio(audio_path):
     """Reproduce un audio encontrado en la ruta proporcionada
-    invocando el reproductor vlc.
+    invocando el plugin del reproductor vlc para Python.
 
     Args:
         audio_path: La ruta al archivo de audio a reproducir
@@ -49,10 +49,8 @@ def reproducir_audio(audio_path):
     try:
         audio_file = pathlib.Path(audio_path)
         if audio_file.exists():
-            subprocess.run(["cvlc", audio_path, "--play-and-exit"],
-                           stdout=subprocess.DEVNULL,
-                           stderr=subprocess.DEVNULL,
-                           check=True)
+            player = MediaPlayer(audio_file)
+            player.play()
         else:
             raise FileNotFoundError("Archivo de audio no encontrado")
     except FileNotFoundError as e:
