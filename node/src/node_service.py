@@ -10,7 +10,7 @@ class SensorNodeService(rpyc.Service):
         self.logger = logging.getLogger(self.name)
         self.logger.setLevel(
             logging.WARNING if silent_logger else logging.INFO)
-        
+        self.logger.info("Corriendo servicio de nodo sensor.")
 
     def on_connect(self, conn):
         pass
@@ -21,12 +21,12 @@ class SensorNodeService(rpyc.Service):
     def exposed_get_sensor_reading(self):
         reading = self.sensor.get_reading()
         self.logger.info(f"Enviando medición: <{reading}>...")
-
         return reading
 
     def exposed_get_sensor_type(self):
-        self.logger.info()
-        return self.sensor.get_type()
+        sensor_type = self.sensor.get_type()
+        self.logger.info(f"Enviando tipo de sensor: <{sensor_type}>...")
+        return 
 
     def exposed_get_sensor_name(self):
         self.logger.info("Enviando nombre de nodo...")
