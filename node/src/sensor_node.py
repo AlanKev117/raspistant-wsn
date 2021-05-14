@@ -32,7 +32,12 @@ from node.src.sensor import DummySensor, HallSensor, PIRSensor
               help=('Intervalo de tiempo en minutos que el nodo pasará sin '
                     'registrarse en el asistente de voz. Si es 0, el nodo '
                     'intentará registrarse múltiples veces por segundo.'))
-@click.option('--verbose', '-v', is_flag=True, help='Modo verbose')
+@click.option('-v', '--verbose', 
+              count=True, metavar="<-v * n veces>", 
+              help=("Bandera que define el comportamiento de los logs."
+                    "Mientras más repeticiones, se muestran más logs:\n"
+                    "ninguna, sin logs; una, logs de nodo; dos o más, "
+                    "logs de nodo y conexión."))
 def main(node_name, sensor_type, port, timeout, verbose):
     sensor_node_process(node_name, sensor_type, port, timeout, verbose)
 
@@ -54,7 +59,7 @@ def sensor_node_process(node_name, sensor_type, port, timeout, verbose):
 
     # Hilo de conexión
     conn_thread = threading.Thread(target=check_node_connection, 
-                                   args=(status, verbose), 
+                                   args=(status, verbose >= 2), 
                                    daemon=True)
     conn_thread.start()
     logging.info(f"Hilo de detección de conexión a red local iniciado.")
@@ -63,9 +68,12 @@ def sensor_node_process(node_name, sensor_type, port, timeout, verbose):
         pass
 
     # Hilo de servicio de medición
+    logger = logging.getLogger(node_name)
+    logger.setLevel(logging.INFO if verbose else logging.WARNING)
     t = ThreadedServer(service, 
                        port=port,
-                       registrar=UDPRegistryClient(timeout=timeout))
+                       registrar=UDPRegistryClient(timeout=timeout), 
+                       logger=logger)
     t.start()
     logging.info(f"Hilo de servicio de medición iniciado.")
 

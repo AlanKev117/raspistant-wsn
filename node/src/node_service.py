@@ -10,7 +10,7 @@ class SensorNodeService(rpyc.Service):
         self.logger = logging.getLogger(self.name)
         # Logger configuration
         h = logging.StreamHandler()
-        f = logging.Formatter("%(levelname)s:NODESERVICE(%(name)s):%(msg)s")
+        f = logging.Formatter("%(levelname)s:NODESERVICE/%(name)s:%(msg)s")
         h.setFormatter(f)
         self.logger.addHandler(h)
         self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
@@ -29,7 +29,7 @@ class SensorNodeService(rpyc.Service):
     def exposed_get_sensor_type(self):
         sensor_type = self.sensor.get_type()
         self.logger.info(f"Enviando tipo de sensor: <{sensor_type}>...")
-        return
+        return sensor_type
 
     def exposed_get_sensor_name(self):
         self.logger.info("Enviando nombre de nodo...")
