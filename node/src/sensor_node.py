@@ -25,13 +25,18 @@ from node.src.sensor import DummySensor, HallSensor, PIRSensor
 @click.option('--port', default=18861,
               metavar='<puerto>', show_default=True,
               help='Puerto por el que el nodo recibe peticiones de medición')
+@click.option('--timeout', default=1,
+              type=click.IntRange(0, 15, clamp=True),
+              metavar='<minutos>', show_default=True,
+              help=('Intervalo de tiempo en minutos que el nodo pasará sin '
+                    'registrarse en el asistente de voz. Si es 0, '))
 @click.option('--verbose', '-v', is_flag=True, help='Modo verbose')
-def main(node_name, sensor_type, port, verbose):
+def main(node_name, sensor_type, port, timeout, verbose):
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
     sensor_node_process(node_name, sensor_type, port)
 
 
-def sensor_node_process(node_name, sensor_type, port):
+def sensor_node_process(node_name, sensor_type, port, timeout):
     sensor_types = {
         "dummy": DummySensor,
         "pir": PIRSensor,
@@ -46,7 +51,7 @@ def sensor_node_process(node_name, sensor_type, port):
     hilo_internet.start()
 
     t = ThreadedServer(service, port=port,
-                       registrar=UDPRegistryClient(timeout=0))
+                       registrar=UDPRegistryClient(timeout=1))
     logging.info(f"Nodo sensor {node_name} iniciado.")
     t.start()
     sensor.deactivate()
