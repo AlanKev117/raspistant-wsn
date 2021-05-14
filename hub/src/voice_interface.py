@@ -2,16 +2,12 @@ import logging
 import subprocess
 import pathlib
 
-# Import audio synthesis library if device is online
-try:
-    from gtts import gTTS
-except:
-    pass
+from gtts import gTTS
 
-ONLINE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"online.mp3"
-OFFLINE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"offline.mp3"
-UPDATE_AUDIO_PATH = pathlib.Path(__file__).parent/"assets"/"update.mp3"
-TELL_ME_PATH = pathlib.Path(__file__).parent/"assets"/"tellme.mp3"
+ONLINE_AUDIO_PATH = pathlib.Path(__file__).parent.parent/"assets"/"online.mp3"
+OFFLINE_AUDIO_PATH = pathlib.Path(__file__).parent.parent/"assets"/"offline.mp3"
+UPDATE_AUDIO_PATH = pathlib.Path(__file__).parent.parent/"assets"/"update.mp3"
+TELL_ME_PATH = pathlib.Path(__file__).parent.parent/"assets"/"tellme.mp3"
 
 
 def generar_audio(audio_path, text, slow=False, lang="es"):

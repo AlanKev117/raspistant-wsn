@@ -2,7 +2,6 @@ import logging
 import threading
 import sys
 import pathlib
-import time
 
 import click
 from rpyc.utils.server import ThreadedServer
@@ -12,9 +11,9 @@ from rpyc.utils.registry import UDPRegistryClient
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
 sys.path.append(PROJECT_DIR)
 
-from misc.connection_notifier import ConnectionNotifier
+from node.src.node_connection import check_node_connection
 from node.src.node_service import SensorNodeService
-from node.src.sensor import Sensor, DummySensor, HallSensor, PIRSensor
+from node.src.sensor import DummySensor, HallSensor, PIRSensor
 
 @click.command()
 @click.option('--name', default="aleatorio",
@@ -42,9 +41,8 @@ def sensor_node_process(sensor_name, sensor_type, server_port):
     sensor = sensor_types[sensor_type](sensor_name)
     service = classpartial(SensorNodeService, sensor)
 
-    conexion = ConnectionNotifier()
     hilo_internet = threading.Thread(
-        target=conexion.check_sensor_node_connection, daemon=True)
+        target=check_node_connection, daemon=True)
     hilo_internet.start()
 
     t = ThreadedServer(service, port=server_port,

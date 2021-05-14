@@ -1,4 +1,3 @@
-
 import logging
 import sys
 import pathlib
@@ -6,12 +5,12 @@ import threading
 
 import click
 
-# Para uso de imports estáticos, añadimos la ruta del proyecto al sys path.
+# Append project path to PATH for following absolute imports work
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
 sys.path.append(PROJECT_DIR)
 
-from misc.connection_notifier import ConnectionNotifier
-from misc.voice_interface import hablar, TELL_ME_PATH
+from hub.src.assistant_connection import check_assistant_connection
+from hub.src.voice_interface import hablar, TELL_ME_PATH
 from hub.src.registry_server import registry_server
 from hub.src.hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
 
@@ -46,9 +45,8 @@ def main(device_model_id, device_id, trigger_word, verbose):
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
 
     # Iniciamos detector de conexión a internet.
-    conexion = ConnectionNotifier()
     hilo_internet = threading.Thread(
-        target=conexion.check_assistant_connection, daemon=True)
+        target=check_assistant_connection, daemon=True)
     hilo_internet.start()
 
     # Iniciamos servidor de registro

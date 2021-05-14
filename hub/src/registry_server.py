@@ -1,8 +1,7 @@
 import logging
 
-from rpyc.utils.registry import REGISTRY_PORT, DEFAULT_PRUNING_TIMEOUT
+from rpyc.utils.registry import REGISTRY_PORT
 from rpyc.utils.registry import UDPRegistryServer
-from rpyc.lib import setup_logger
 import click
 
 @click.command()
