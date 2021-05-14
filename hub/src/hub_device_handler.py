@@ -4,7 +4,7 @@ import time
 from googlesamples.assistant.grpc import device_helpers
 
 from hub.src.rpc_client import RPCClient
-from misc.voice_interface import hablar
+from hub.src.voice_interface import hablar
 
 def create_hub_device_handler(device_id):
 
