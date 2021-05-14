@@ -8,27 +8,37 @@ CONNECTION_LED_PIN = 25
 
 def check_node_connection():
     
-    connected = False
+    logging.info("Hilo de conexion a red local iniciado")
 
-    logging.info("Hilo de conexion a internet iniciado")
+    connected = False
+    changed = False
+    first_time = True
     led = LED(CONNECTION_LED_PIN)
 
     while True:
+        
         ip = subprocess.check_output("hostname -I",
                                         stderr=subprocess.STDOUT,
                                         shell=True).decode()
         if ip == "\n":
-            logging.error("Sin conexion a internet")
+            changed = connected
             connected = False
-        else:
-            logging.info("Conectado a internet!")
-            connected = True
-
-        # Actualizar estado del led.
-        if connected:
-            led.on()
-        else:
             led.off()
+        else:
+            changed = not connected
+            connected = True
+            led.on()
+
+        # Actualiza log de estado de conexión.
+        if first_time or changed:
+            
+            if connected:
+                logging.info("Conectado a internet!")
+            else:
+                logging.error("Sin conexion a internet")
+            
+            first_time = False
+
 
         time.sleep(5)
 

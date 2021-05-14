@@ -6,10 +6,11 @@ from hub.src.voice_interface import hablar, OFFLINE_AUDIO_PATH, ONLINE_AUDIO_PAT
 
 def check_assistant_connection():
 
+    logging.info("Hilo de conexion a internet iniciado")
+    
     connected = False
     changed = False
     first_time = True
-    logging.info("Hilo de conexion a internet iniciado")
 
     while True:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
