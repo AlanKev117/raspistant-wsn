@@ -9,10 +9,6 @@ class SensorNodeService(rpyc.Service):
         self.name = self.sensor.get_name()
         self.logger = logging.getLogger(self.name)
         # Logger configuration
-        h = logging.StreamHandler()
-        f = logging.Formatter("%(levelname)s:NODESERVICE/%(name)s:%(msg)s")
-        h.setFormatter(f)
-        self.logger.addHandler(h)
         self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
     def on_connect(self, conn):

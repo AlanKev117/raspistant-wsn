@@ -85,9 +85,9 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
                 if wait_for_trigger:
                     if trigger_word is None:
                         click.pause(info=('Presiona una tecla para activar '
-                                          'el asistente...'))
+                                          'el asistente...\n'))
                     else:
-                        print(f'Di "{trigger_word}" para activar el asistente...')
+                        print(f'Di "{trigger_word}" para activar el asistente...\n')
                         hub_assistant.wait_for_hot_word(trigger_word)
                     hablar(text=None, cache=TELLME_AUDIO_PATH)
 
