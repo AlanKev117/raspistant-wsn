@@ -10,10 +10,6 @@ CONNECTION_LED_PIN = 25
 def check_node_connection(status, verbose):
 
     logger = logging.getLogger("NODE_CONNECTION")
-    h = logging.StreamHandler()
-    f = logging.Formatter("%(levelname)s:%(name)s:%(msg)s")
-    h.setFormatter(f)
-    logger.addHandler(h)
     logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
     connected = False
