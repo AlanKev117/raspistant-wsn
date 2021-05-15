@@ -86,6 +86,10 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
                     if trigger_word is None:
                         click.pause(info=('Presiona una tecla para activar '
                                           'el asistente...\n'))
+                        if not status["online"]:
+                            logging.error(("No se puede realizar la consulta "
+                                           "hasta reestablecer la conexión."))
+                            continue
                     else:
                         print(f'Di "{trigger_word}" para activar el asistente...\n')
                         hub_assistant.wait_for_hot_word(trigger_word)
