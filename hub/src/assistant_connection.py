@@ -7,6 +7,7 @@ from hub.src.voice_interface import hablar, OFFLINE_AUDIO_PATH, ONLINE_AUDIO_PAT
 def check_assistant_connection(status, verbose):
 
     logger = logging.getLogger("ASSISTANT_CONNECTION")
+    logger.handlers = []
     h = logging.StreamHandler()
     f = logging.Formatter("%(levelname)s:%(name)s:%(msg)s")
     h.setFormatter(f)

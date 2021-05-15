@@ -25,10 +25,6 @@ def registry_server(port, pruning_timeout, verbose=False):
 
     # Creación de logger para servidor de registro
     logger = logging.getLogger(f"REGSRV/UDP/{port}")
-    h = logging.StreamHandler()
-    f = logging.Formatter("%(levelname)s:%(name)s:%(msg)s")
-    h.setFormatter(f)
-    logger.addHandler(h)
     logger.setLevel(logging.DEBUG if verbose else logging.WARNING)
 
     # Creación e invocación de servidor de registro
