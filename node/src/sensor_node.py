@@ -67,13 +67,16 @@ def sensor_node_process(node_name, sensor_type, port, timeout, verbose):
     while not status["online"]:
         pass
 
-    # Hilo de servicio de medición
-    logger = logging.getLogger(node_name)
-    logger.setLevel(logging.INFO if verbose else logging.WARNING)
+    # Hilo de servicio de medición + cliente de registro
+    service_logger = logging.getLogger(f"NODE_SERVICE/{node_name}")
+    service_logger.setLevel(logging.INFO if verbose else logging.WARNING)
+    udp_logger = logging.getLogger("REGCLNT/UDP")
+    udp_logger.setLevel(logging.INFO if verbose >= 2 else logging.WARNING)
     t = ThreadedServer(service, 
                        port=port,
-                       registrar=UDPRegistryClient(timeout=timeout), 
-                       logger=logger)
+                       registrar=UDPRegistryClient(timeout=timeout,
+                                                   logger=udp_logger), 
+                       logger=service_logger)
     t.start()
     logging.info(f"Hilo de servicio de medición iniciado.")
 

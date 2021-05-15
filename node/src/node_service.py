@@ -7,7 +7,7 @@ class SensorNodeService(rpyc.Service):
     def __init__(self, sensor, verbose=False):
         self.sensor = sensor
         self.name = self.sensor.get_name()
-        self.logger = logging.getLogger(self.name)
+        self.logger = logging.getLogger(f"NODE_SERVICE/{self.name}")
         # Logger configuration
         self.logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
