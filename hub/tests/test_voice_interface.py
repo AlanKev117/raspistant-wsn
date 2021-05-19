@@ -1,5 +1,3 @@
-import os
-
 from hub.src.voice_interface import hablar
 
 TEST_STRING = "prueba de audio"

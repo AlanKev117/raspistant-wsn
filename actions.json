@@ -36,7 +36,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": "Descubriendo nodos sensores"
+                                    "textToSpeech": ""
                                 }
                             },
                             {
@@ -82,7 +82,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": "Listando nodos sensores"
+                                    "textToSpeech": ""
                                 }
                             },
                             {
@@ -117,12 +117,8 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "desconecta el sensor $SchemaOrg_Text:sensor",
-                        "desconectar el sensor $SchemaOrg_Text:sensor",
-                        "olvida el sensor $SchemaOrg_Text:sensor",
-                        "olvidar el sensor $SchemaOrg_Text:sensor",
-                        "olvida $SchemaOrg_Text:sensor",
-                        "olvidar $SchemaOrg_Text:sensor"
+                        "desconectar el nodo $SchemaOrg_Text:sensor",
+                        "olvida nodo $SchemaOrg_Text:sensor"
                     ]
                 }
             },
@@ -132,7 +128,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": "Desconectando el sensor $sensor"
+                                    "textToSpeech": "Nodo $sensor olvidado"
                                 }
                             },
                             {
@@ -167,12 +163,8 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "consulta el sensor $SchemaOrg_Text:sensor",
-                        "consulta el estado del sensor $SchemaOrg_Text:sensor",
-                        "consultar el sensor $SchemaOrg_Text:sensor",
-                        "obtener medicion del sensor $SchemaOrg_Text:sensor",
-                        "consulta $SchemaOrg_Text:sensor",
-                        "consultar $SchemaOrg_Text:sensor"
+                        "obtener estado de $SchemaOrg_Text:sensor",
+                        "consulta el nodo $SchemaOrg_Text:sensor"
                     ]
                 }
             },
@@ -182,7 +174,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": "Consultando el sensor $sensor"
+                                    "textToSpeech": ""
                                 }
                             },
                             {
@@ -197,35 +189,6 @@
                     }
                 }
             }
-        }
-    ],
-    "types": [
-        {
-            "name": "$Speed",
-            "entities": [
-                {
-                    "key": "SLOWLY",
-                    "synonyms": [
-                        "slowly",
-                        "slow"
-                    ]
-                },
-                {
-                    "key": "NORMALLY",
-                    "synonyms": [
-                        "normally",
-                        "regular"
-                    ]
-                },
-                {
-                    "key": "QUICKLY",
-                    "synonyms": [
-                        "quickly",
-                        "fast",
-                        "quick"
-                    ]
-                }
-            ]
         }
     ]
 }

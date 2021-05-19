@@ -4,7 +4,7 @@ from multiprocessing import Process
 import pytest
 from rpyc.utils.registry import UDPRegistryClient
 
-from registry_server.src.registry_server import registry_server
+from hub.src.registry_server import registry_server
 from sensor_node.src.sensor_node import sensor_node
 
 # Argumentos del servidor de registro
