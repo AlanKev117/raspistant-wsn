@@ -15,7 +15,11 @@ from hub.src.assistant_connection import check_assistant_connection
 from hub.src.voice_interface import hablar, TELLME_AUDIO_PATH
 from hub.src.registry_server import registry_server
 from hub.src.hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
-from hub.src.triggers import wait_for_hot_word, get_trigger_function
+from hub.src.triggers import (
+    get_trigger_function,
+    wait_for_hot_word, 
+    wait_for_button_pressed_and_released
+)
 
 @click.command()
 @click.option('--device-model-id', '--model',
@@ -89,17 +93,17 @@ def main(device_model_id, device_id, trigger, word, timeout, verbose):
         if trigger == "button":
             wait_for_trigger = get_trigger_function(
                 "Presiona el botón para activar el asistente...",
-                lambda : button.wait_for_release()
+                lambda: wait_for_button_pressed_and_released(button)
             )
         elif trigger == "key":
             wait_for_trigger = get_trigger_function(
                 "Presiona una tecla para activar el asistente...",
-                lambda : click.pause(None)
+                lambda: click.pause(None)
             )
         else: # trigger == "word"
             wait_for_trigger = get_trigger_function(
                 f"Di '{word}' para activar el asistente...",
-                lambda : wait_for_hot_word(word)
+                lambda: wait_for_hot_word(word)
             )
     except:
         logging.error("Error al configurar el activador del asistente.")

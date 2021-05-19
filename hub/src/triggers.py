@@ -29,6 +29,10 @@ def wait_for_hot_word(hot_word):
                 print("Audio incorrecto. Intente de nuevo.")
 
 
+def wait_for_button_pressed_and_released(button):
+    button.wait_for_press()
+    button.wait_for_released()
+
 def get_trigger_function(trigger_message, waiter):
     def trigger_function():
         print(trigger_message)
