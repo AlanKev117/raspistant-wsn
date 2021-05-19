@@ -31,7 +31,7 @@ def wait_for_hot_word(hot_word):
 
 def wait_for_button_pressed_and_released(button):
     button.wait_for_press()
-    button.wait_for_released()
+    button.wait_for_release()
 
 def get_trigger_function(trigger_message, waiter):
     def trigger_function():
