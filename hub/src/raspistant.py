@@ -4,6 +4,7 @@ import pathlib
 import threading
 
 import click
+from gpiozero import Button
 
 # Ruta del proyecto agregada a PATH para imports estáticos
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
@@ -74,6 +75,8 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
 
     try:
 
+        trigger_button = Button(19)
+
         with HubAssistant(device_model_id, device_id) as hub_assistant:
 
             # Esperamos por un detonador para la primer conversación.
@@ -83,16 +86,17 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
             while True:
 
                 if wait_for_trigger:
-                    if trigger_word is None:
-                        click.pause(info=('Presiona una tecla para activar '
-                                          'el asistente...\n'))
-                        if not status["online"]:
-                            logging.error(("No se puede realizar la consulta "
-                                           "hasta reestablecer la conexión."))
-                            continue
-                    else:
+                    
+                    if not status["online"]:
+                        continue
+                    
+                    if trigger_word:
                         print(f'Di "{trigger_word}" para activar el asistente...\n')
                         hub_assistant.wait_for_hot_word(trigger_word)
+                    else:
+                        print('Presiona el botón para activar el asistente...')
+                        trigger_button.wait_for_press()
+
                     hablar(text=None, cache=TELLME_AUDIO_PATH)
 
                 keep_conversation = hub_assistant.assist()
