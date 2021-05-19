@@ -75,7 +75,7 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
 
     try:
 
-        trigger_button = Button(23)
+        trigger_button = Button(19)
 
         with HubAssistant(device_model_id, device_id) as hub_assistant:
 
@@ -96,7 +96,7 @@ def main(device_model_id, device_id, trigger_word, timeout, verbose):
                     else:
                         print('Presiona el botón para activar el asistente...')
                         trigger_button.wait_for_press()
-                        
+
                     hablar(text=None, cache=TELLME_AUDIO_PATH)
 
                 keep_conversation = hub_assistant.assist()
