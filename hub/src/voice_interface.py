@@ -12,6 +12,8 @@ ERROR_AUDIO_PATH = pathlib.Path(
     __file__).parent.parent/"assets"/"error.mp3"
 TELLME_AUDIO_PATH = pathlib.Path(
     __file__).parent.parent/"assets"/"tellme.mp3"
+SERVICE_AUDIO_PATH = pathlib.Path(
+    __file__).parent.parent/"assets"/"service.mp3"
 SHUTDOWN_AUDIO_PATH = pathlib.Path(
     __file__).parent.parent/"assets"/"shutdown.mp3"
 
@@ -111,10 +113,12 @@ if __name__ == "__main__":
     online_msg = "Estoy en línea."
     error_msg = "Ocurrió un error inesperado en el asistente."
     tellme_msg = "Dime."
+    service_msg = "No me pude conectar al servicio de asistencia de voz."
     shutdown_msg = "Apagando tu dispositivo. Hasta pronto."
 
     generar_audio(OFFLINE_AUDIO_PATH, offline_msg)
     generar_audio(ONLINE_AUDIO_PATH, online_msg)
     generar_audio(ERROR_AUDIO_PATH, error_msg)
     generar_audio(TELLME_AUDIO_PATH, tellme_msg)
+    generar_audio(SERVICE_AUDIO_PATH, service_msg)
     generar_audio(SHUTDOWN_AUDIO_PATH, shutdown_msg)
