@@ -21,7 +21,6 @@ import logging
 import os
 import os.path
 import sys
-import time
 
 import click
 import grpc
@@ -246,7 +245,6 @@ class HubAssistant(object):
                 )
                 device_actions_requests.append(device_request)
 
-        time.sleep(1)
         for device_request in device_actions_requests:
             fs = self.device_handler(device_request)
             if fs:

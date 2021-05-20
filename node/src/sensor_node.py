@@ -5,6 +5,7 @@ import sys
 import pathlib
 
 import click
+from gpiozero import Button
 from rpyc.utils.server import ThreadedServer
 from rpyc.utils.helpers import classpartial
 from rpyc.utils.registry import UDPRegistryClient
@@ -45,6 +46,13 @@ def main(node_name, sensor_type, port, timeout, verbose):
 def sensor_node_process(node_name, sensor_type, port, timeout, verbose):
     
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
+
+    # Habilitamos apagado por botón integrado.
+    try:
+        button = Button(19, hold_time=10)
+        button.when_held = lambda: os.system("sudo halt")
+    except:
+        logging.warning("Tu dispositivo no podrá ser apagado mediante botón")
     
     sensor_types = {
         "dummy": DummySensor,

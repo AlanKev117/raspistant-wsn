@@ -8,10 +8,12 @@ ONLINE_AUDIO_PATH = pathlib.Path(
     __file__).parent.parent/"assets"/"online.mp3"
 OFFLINE_AUDIO_PATH = pathlib.Path(
     __file__).parent.parent/"assets"/"offline.mp3"
-SERVICE_AUDIO_PATH = pathlib.Path(
-    __file__).parent.parent/"assets"/"service.mp3"
+ERROR_AUDIO_PATH = pathlib.Path(
+    __file__).parent.parent/"assets"/"error.mp3"
 TELLME_AUDIO_PATH = pathlib.Path(
     __file__).parent.parent/"assets"/"tellme.mp3"
+SHUTDOWN_AUDIO_PATH = pathlib.Path(
+    __file__).parent.parent/"assets"/"shutdown.mp3"
 
 
 def generar_audio(audio_path, text, slow=False, lang="es"):
@@ -106,12 +108,13 @@ if __name__ == "__main__":
     offline_msg = ("No tengo conexión a internet. "
                    "Revisa que todo esté en orden con tu módem y "
                    "que tu asistente tenga los datos de red adecuados.")
-    online_msg = ("Estoy en línea.")
-    service_msg = ("No pude conectarme con el servicio de "
-                   "asistencia de voz.")
-    tellme_msg = "dime"
+    online_msg = "Estoy en línea."
+    error_msg = "Ocurrió un error inesperado en el asistente."
+    tellme_msg = "Dime."
+    shutdown_msg = "Apagando tu dispositivo. Hasta pronto."
 
     generar_audio(OFFLINE_AUDIO_PATH, offline_msg)
     generar_audio(ONLINE_AUDIO_PATH, online_msg)
-    generar_audio(SERVICE_AUDIO_PATH, service_msg)
+    generar_audio(ERROR_AUDIO_PATH, error_msg)
     generar_audio(TELLME_AUDIO_PATH, tellme_msg)
+    generar_audio(SHUTDOWN_AUDIO_PATH, shutdown_msg)

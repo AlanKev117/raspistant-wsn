@@ -12,7 +12,12 @@ PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
 sys.path.append(PROJECT_DIR)
 
 from hub.src.assistant_connection import check_assistant_connection
-from hub.src.voice_interface import hablar, TELLME_AUDIO_PATH
+from hub.src.voice_interface import (
+    hablar,
+    ERROR_AUDIO_PATH,
+    TELLME_AUDIO_PATH,
+    SHUTDOWN_AUDIO_PATH,
+)
 from hub.src.registry_server import registry_server
 from hub.src.hub_assistant import HubAssistant, DEVICE_CONFIG_PATH
 from hub.src.triggers import (
@@ -81,12 +86,17 @@ def main(device_model_id, device_id, trigger, word, timeout, verbose):
     rs_process.start()
     logging.info("Hilo de servidor de registro iniciado.")
 
-
+    # Habilitamos apagado por botón integrado.
     try:
+        
+        def shutdown_callback():
+            hablar(text=None, cache=SHUTDOWN_AUDIO_PATH)
+            os.system("sudo halt")
+        
         button = Button(19, hold_time=10)
-        button.when_held = lambda: os.system("halt")
+        button.when_held = shutdown_callback
     except:
-        logging.warning("Tu dispositivo no podrá ser apagado ni activado mediante botón.")
+        logging.warning("Tu dispositivo no podrá ser apagado mediante botón")
     
     # Configuración del detonador: botón, tecla, palabra/frase.
     try:
@@ -130,6 +140,7 @@ def main(device_model_id, device_id, trigger, word, timeout, verbose):
 
     except Exception as e:
         logging.error("Ocurrió un error inesperado en el asistente.")
+        hablar(text=None, cache=ERROR_AUDIO_PATH)
         raise e
 
 if __name__ == '__main__':
