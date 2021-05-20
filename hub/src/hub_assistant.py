@@ -21,6 +21,7 @@ import logging
 import os
 import os.path
 import sys
+import time
 
 import click
 import grpc
@@ -196,6 +197,7 @@ class HubAssistant(object):
         """
         continue_conversation = False
         device_actions_futures = []
+        device_actions_requests = []
 
         self.conversation_stream.start_recording()
         logging.info('Recording audio request.')
@@ -242,9 +244,13 @@ class HubAssistant(object):
                 device_request = json.loads(
                     resp.device_action.device_request_json
                 )
-                fs = self.device_handler(device_request)
-                if fs:
-                    device_actions_futures.extend(fs)
+                device_actions_requests.append(device_request)
+
+        time.sleep(3)
+        for device_request in device_actions_requests:
+            fs = self.device_handler(device_request)
+            if fs:
+                device_actions_futures.extend(fs)
 
         if len(device_actions_futures):
             logging.info('Waiting for device executions to complete.')

@@ -58,7 +58,7 @@ def reproducir_audio(audio_path):
             #                stdout=subprocess.DEVNULL,
             #                stderr=subprocess.DEVNULL,
             #                check=True)
-            playsound(audio_file)
+            playsound(str(audio_file.absolute()))
         else:
             raise FileNotFoundError("Archivo de audio no encontrado")
     except FileNotFoundError as e:
