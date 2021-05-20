@@ -1,5 +1,5 @@
 import logging
-from os import stat
+import os
 import threading
 import sys
 import pathlib
