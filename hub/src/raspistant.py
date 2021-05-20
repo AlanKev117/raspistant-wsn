@@ -129,8 +129,8 @@ def main(device_model_id, device_id, trigger, word, timeout, verbose):
             # Bucle de asistente.
             while True:
 
-                # if not status["online"]:
-                #     continue
+                if not status["online"]:
+                    continue
 
                 if not keep_conversation:                    
                     wait_for_trigger()
