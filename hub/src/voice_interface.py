@@ -3,6 +3,7 @@ import pathlib
 import subprocess
 
 from gtts import gTTS
+from playsound import playsound
 
 ONLINE_AUDIO_PATH = pathlib.Path(
     __file__).parent.parent/"assets"/"online.mp3"
@@ -53,10 +54,11 @@ def reproducir_audio(audio_path):
     try:
         audio_file = pathlib.Path(audio_path)
         if audio_file.exists():
-            subprocess.run(["cvlc", audio_file, "--play-and-exit"],
-                           stdout=subprocess.DEVNULL,
-                           stderr=subprocess.DEVNULL,
-                           check=True)
+            # subprocess.run(["cvlc", audio_file, "--play-and-exit"],
+            #                stdout=subprocess.DEVNULL,
+            #                stderr=subprocess.DEVNULL,
+            #                check=True)
+            playsound(audio_file)
         else:
             raise FileNotFoundError("Archivo de audio no encontrado")
     except FileNotFoundError as e:
