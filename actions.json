@@ -35,6 +35,11 @@
                     "templatedResponse": {
                         "items": [
                             {
+                                "simpleResponse": {
+                                    "textToSpeech": "Detectando nodos sensores"
+                                }
+                            },
+                            {
                                 "deviceExecution": {
                                     "command": "descubrir_nodos",
                                     "params": {
@@ -75,6 +80,11 @@
                 "staticFulfillment": {
                     "templatedResponse": {
                         "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "Listando nodos sensores"
+                                }
+                            },
                             {
                                 "deviceExecution": {
                                     "command": "listar_nodos",
@@ -162,6 +172,11 @@
                 "staticFulfillment": {
                     "templatedResponse": {
                         "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "Consultando nodo $sensor"
+                                }
+                            },
                             {
                                 "deviceExecution": {
                                     "command": "consultar_nodo",

@@ -246,7 +246,7 @@ class HubAssistant(object):
                 )
                 device_actions_requests.append(device_request)
 
-        time.sleep(3)
+        time.sleep(1)
         for device_request in device_actions_requests:
             fs = self.device_handler(device_request)
             if fs:
