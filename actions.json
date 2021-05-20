@@ -35,11 +35,6 @@
                     "templatedResponse": {
                         "items": [
                             {
-                                "simpleResponse": {
-                                    "textToSpeech": ""
-                                }
-                            },
-                            {
                                 "deviceExecution": {
                                     "command": "descubrir_nodos",
                                     "params": {
@@ -80,11 +75,6 @@
                 "staticFulfillment": {
                     "templatedResponse": {
                         "items": [
-                            {
-                                "simpleResponse": {
-                                    "textToSpeech": ""
-                                }
-                            },
                             {
                                 "deviceExecution": {
                                     "command": "listar_nodos",
@@ -172,11 +162,6 @@
                 "staticFulfillment": {
                     "templatedResponse": {
                         "items": [
-                            {
-                                "simpleResponse": {
-                                    "textToSpeech": ""
-                                }
-                            },
                             {
                                 "deviceExecution": {
                                     "command": "consultar_nodo",
