@@ -39,9 +39,8 @@ def wait_for_hot_word(hot_word):
 
 
 def wait_for_button_pressed_and_released(button):
-    while True:
-        button.wait_for_press()
-        button.wait_for_release()
+    button.wait_for_press()
+    button.wait_for_release()
 
 
 def wait_for_item(item, prop):
@@ -59,21 +58,20 @@ def get_trigger_function(trigger_message, waiter):
 # Configuración del detonador: botón, tecla, palabra/frase.
 def define_trigger_waiter(trigger, word, button_pin):
     try:
-
         if trigger == "button":
             button = Button(button_pin)
-            return get_trigger_function(
+            wait_for_trigger = get_trigger_function(
                 "Presiona el botón para activar el asistente...",
                 lambda: wait_for_button_pressed_and_released(button)
             )
         elif trigger == "key":
-            return get_trigger_function(
+            wait_for_trigger = get_trigger_function(
                 "Presiona una tecla para activar el asistente...",
                 lambda: click.pause(None)
             )
         else:  # trigger == "word"
             assert word is not None and len(word) > 0
-            return get_trigger_function(
+            wait_for_trigger = get_trigger_function(
                 f"Di '{word}' para activar el asistente...",
                 lambda: wait_for_hot_word(word)
             )
@@ -87,3 +85,5 @@ def define_trigger_waiter(trigger, word, button_pin):
         logging.error(("Tu dispositivo no soporta botones físicos, "
                        "selecciona otro método de activación"))
         sys.exit(-1)
+
+    return wait_for_trigger
