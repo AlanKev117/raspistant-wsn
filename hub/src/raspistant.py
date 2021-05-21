@@ -5,7 +5,6 @@ import threading
 import os
 
 import click
-from gpiozero import Button
 
 # Ruta del proyecto agregada a PATH para imports estáticos
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
@@ -118,6 +117,7 @@ def main(device_model_id, device_id, trigger, word, timeout, verbose):
     except:
         logging.error("Error al configurar el activador del asistente.")
         sys.exit(-1)
+
 
     try:
 
