@@ -206,7 +206,6 @@ class HubAssistant(object):
             elif resp.dialog_state_out.microphone_mode == CLOSE_MICROPHONE:
                 continue_conversation = False
             if resp.device_action.device_request_json:
-                print("action",resp.device_action)
                 device_request = json.loads(
                     resp.device_action.device_request_json
                 )
