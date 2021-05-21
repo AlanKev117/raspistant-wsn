@@ -36,7 +36,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": ""
+                                    "textToSpeech": "Detectando nodos sensores"
                                 }
                             },
                             {
@@ -82,7 +82,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": ""
+                                    "textToSpeech": "Listando nodos sensores"
                                 }
                             },
                             {
@@ -174,7 +174,7 @@
                         "items": [
                             {
                                 "simpleResponse": {
-                                    "textToSpeech": ""
+                                    "textToSpeech": "Consultando nodo $sensor"
                                 }
                             },
                             {

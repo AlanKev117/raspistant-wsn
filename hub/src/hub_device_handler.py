@@ -80,7 +80,6 @@ def create_hub_device_handler(device_id):
     @hub_device_handler.command('consultar_nodo')
     def consultar_nodo(sensor_name):
         
-        time.sleep(1)
         logging.info("Obteniendo datos del nodo sensor %s" % sensor_name)
 
         try:

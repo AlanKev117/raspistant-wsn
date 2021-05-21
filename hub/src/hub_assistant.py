@@ -27,7 +27,6 @@ import grpc
 import google.auth.transport.grpc
 import google.auth.transport.requests
 import google.oauth2.credentials
-import speech_recognition as sr
 
 
 from google.assistant.embedded.v1alpha2 import (
@@ -173,10 +172,6 @@ class HubAssistant(object):
         # Callback for device actions.
         self.device_handler = create_hub_device_handler(device_id)
 
-        # Recognizer for trigger word.
-        self.recognizer = sr.Recognizer()
-        #self.recognizer.pause_threshold = 2
-
     def __enter__(self):
         return self
 
@@ -201,6 +196,7 @@ class HubAssistant(object):
         """
         continue_conversation = False
         device_actions_futures = []
+        device_actions_requests = []
 
         self.conversation_stream.start_recording()
         logging.info('Recording audio request.')
@@ -247,9 +243,12 @@ class HubAssistant(object):
                 device_request = json.loads(
                     resp.device_action.device_request_json
                 )
-                fs = self.device_handler(device_request)
-                if fs:
-                    device_actions_futures.extend(fs)
+                device_actions_requests.append(device_request)
+
+        for device_request in device_actions_requests:
+            fs = self.device_handler(device_request)
+            if fs:
+                device_actions_futures.extend(fs)
 
         if len(device_actions_futures):
             logging.info('Waiting for device executions to complete.')
@@ -291,27 +290,3 @@ class HubAssistant(object):
         for data in self.conversation_stream:
             # Subsequent requests need audio data, but not config.
             yield embedded_assistant_pb2.AssistRequest(audio_in=data)
-
-    def wait_for_hot_word(self, hot_word):
-        # Microphone listening.
-        text = ""
-        with sr.Microphone() as source:
-            print("Detectando palabra clave...")
-            try:
-                audio_data = self.recognizer.listen(source)
-                text = self.recognizer.recognize_google(audio_data,
-                                                        language="es-MX")
-            except sr.UnknownValueError:
-                self.recognizer.adjust_for_ambient_noise(source)
-                print("Audio incorrecto. Intente de nuevo.")
-
-            while hot_word.lower() not in text.lower():
-                print("Palabra clave no detectada.")
-                print("Detectando palabra clave...")
-                try:
-                    audio_data = self.recognizer.listen(source)
-                    text = self.recognizer.recognize_google(audio_data,
-                                                            language="es-MX")
-                except:
-                    self.recognizer.adjust_for_ambient_noise(source)
-                    print("Audio incorrecto. Intente de nuevo.")
