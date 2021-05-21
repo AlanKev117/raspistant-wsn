@@ -54,8 +54,6 @@ DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
 DEFAULT_LANGUAGE_CODE = "en-US"
 CREDENTIALS_PATH = os.path.join(
     click.get_app_dir('google-oauthlib-tool'), 'credentials.json')
-DEVICE_CONFIG_PATH = os.path.join(
-    click.get_app_dir('googlesamples-assistant'), 'device_config.json')
 
 
 def create_conversation_stream():
@@ -101,35 +99,6 @@ def create_grpc_channel():
 
     return grpc_channel
 
-
-def fetch_device_data():
-    try:
-        with open(DEVICE_CONFIG_PATH) as f:
-            device = json.load(f)
-            device_id = device['id']
-            device_model_id = device['model_id']
-            logging.info("Using device model %s and device id %s",
-                         device_model_id,
-                         device_id)
-    except Exception as e:
-        cmd = "googlesamples-assistant-devicetool register-device --help"
-        logging.error('Error fetching device data: %s', e)
-        logging.error(f'Run {cmd} to learn how to register a new device')
-        logging.error(f"""Then, run again this program with the args
-                      --device-model-id and --device-id that you chose.
-                      Otherwise, save those in the file {DEVICE_CONFIG_PATH}
-                      like this: 
-                        {{
-                            "id": "<your device id>",
-                            "model_id": "<your device model id>",
-                            "client_type": "SDK_SERVICE"
-                        }}
-                      """)
-        sys.exit(-1)
-
-    return device_model_id, device_id
-
-
 class HubAssistant(object):
     """Hub Assitant that supports conversations and device actions.
 
@@ -141,9 +110,6 @@ class HubAssistant(object):
     def __init__(self, device_model_id, device_id):
 
         self.language_code = DEFAULT_LANGUAGE_CODE
-
-        if not device_model_id or not device_id:
-            device_model_id, device_id = fetch_device_data()
 
         self.device_model_id = device_model_id
         self.device_id = device_id
@@ -240,6 +206,7 @@ class HubAssistant(object):
             elif resp.dialog_state_out.microphone_mode == CLOSE_MICROPHONE:
                 continue_conversation = False
             if resp.device_action.device_request_json:
+                print("action",resp.device_action)
                 device_request = json.loads(
                     resp.device_action.device_request_json
                 )

@@ -57,7 +57,7 @@ def reproducir_audio(audio_path):
     try:
         audio_file = pathlib.Path(audio_path)
         if audio_file.exists():
-            subprocess.run(["cvlc", audio_file, "--play-and-exit"],
+            subprocess.run(["mpg123", audio_file],
                            stdout=subprocess.DEVNULL,
                            stderr=subprocess.DEVNULL,
                            check=True)
