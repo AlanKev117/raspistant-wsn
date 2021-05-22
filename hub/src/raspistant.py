@@ -79,6 +79,9 @@ def main(trigger, word, timeout, verbose):
 
         with HubAssistant(DEVICE_MODEL_ID, DEVICE_ID) as hub_assistant:
 
+            # Notificamos al hilo de conexión que el asistente está corriendo
+            status["assistant-running"] = True
+
             # Esperamos por un detonador para la primer conversación.
             keep_conversation = False
 

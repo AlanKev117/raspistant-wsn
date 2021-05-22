@@ -11,7 +11,7 @@ _recognizer = sr.Recognizer()
 
 # Bandera de estado de conexión a internet.
 # Será manejada por hilo de detección de conexión a internet.
-status = {"online": False}
+status = {"online": False, "assistant-running": False}
 
 
 def wait_for_hot_word(hot_word):
