@@ -37,8 +37,7 @@ def check_assistant_connection(status, verbose):
                 status["online"] = True
             else:
                 logger.error("Sin conexion a internet!")
-                if status["assistant-running"]:
-                    hablar(text=None, cache=OFFLINE_AUDIO_PATH)
+                hablar(text=None, cache=OFFLINE_AUDIO_PATH)
                 status["online"] = False
 
             first_time = False
