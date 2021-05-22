@@ -14,9 +14,6 @@ def check_assistant_connection(status, verbose):
     first_time = True
 
     while True:
-        
-        # Tiempo de polling e inicio de espera para systemd
-        time.sleep(5)
 
         # Polling de conexión a internet
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -36,13 +33,15 @@ def check_assistant_connection(status, verbose):
 
             if connected:
                 logger.info("Conectado a internet!")
-                status["online"] = True
                 hablar(text=None, cache=ONLINE_AUDIO_PATH)
+                status["online"] = True
             else:
                 logger.error("Sin conexion a internet!")
-                status["online"] = False
                 hablar(text=None, cache=OFFLINE_AUDIO_PATH)
+                status["online"] = False
 
             first_time = False
 
+        # Tiempo de polling e inicio de espera para systemd
+        time.sleep(5)
         
