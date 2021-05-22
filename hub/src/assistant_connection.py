@@ -2,7 +2,15 @@ import socket
 import time
 import logging
 
-from hub.src.voice_interface import hablar, OFFLINE_AUDIO_PATH, ONLINE_AUDIO_PATH
+from hub.src.voice_interface import (
+    hablar,
+    OFFLINE_AUDIO_PATH,
+    ONLINE_AUDIO_PATH
+)
+
+POLLING_PAUSE_TIME = 3
+CONNECTION_TEST_ADDRESS = 'embeddedassistant.googleapis.com'
+CONNECTION_TEST_PORT = 80
 
 def check_assistant_connection(status, verbose):
 
@@ -19,7 +27,7 @@ def check_assistant_connection(status, verbose):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(5)
         try:
-            s.connect(('www.google.com', 80))
+            s.connect((CONNECTION_TEST_ADDRESS, CONNECTION_TEST_PORT))
         except (socket.gaierror, socket.timeout):
             changed = connected
             connected = False
@@ -33,15 +41,17 @@ def check_assistant_connection(status, verbose):
 
             if connected:
                 logger.info("Conectado a internet!")
-                hablar(text=None, cache=ONLINE_AUDIO_PATH)
+                if status["speak"]:
+                    hablar(text=None, cache=ONLINE_AUDIO_PATH)
                 status["online"] = True
             else:
                 logger.error("Sin conexion a internet!")
-                hablar(text=None, cache=OFFLINE_AUDIO_PATH)
+                if status["speak"]:
+                    hablar(text=None, cache=OFFLINE_AUDIO_PATH)
                 status["online"] = False
 
             first_time = False
 
         # Tiempo de polling e inicio de espera para systemd
-        time.sleep(5)
+        time.sleep(POLLING_PAUSE_TIME)
         

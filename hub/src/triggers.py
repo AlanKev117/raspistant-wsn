@@ -5,13 +5,15 @@ import speech_recognition as sr
 import click
 from gpiozero import Button
 
+from hub.src.voice_interface import hablar
+
 
 # Recognizer for trigger word.
 _recognizer = sr.Recognizer()
 
 # Bandera de estado de conexión a internet.
 # Será manejada por hilo de detección de conexión a internet.
-status = {"online": False}
+status = {"online": False, "speak": False}
 
 
 def wait_for_hot_word(hot_word):
@@ -43,8 +45,9 @@ def wait_for_button_pressed_and_released(button):
     button.wait_for_release()
 
 
-def wait_for_item(item, prop):
-    while not item[prop]:
+def wait_for_connection():
+    global status
+    while not status["online"]:
         pass
 
 

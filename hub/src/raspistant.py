@@ -4,6 +4,7 @@ import pathlib
 import threading
 
 import click
+from grpc import Status
 
 # Ruta del proyecto agregada a PATH para imports estáticos
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
@@ -12,13 +13,15 @@ sys.path.append(PROJECT_DIR)
 from hub.src.triggers import (
     status,
     define_trigger_waiter,
-    wait_for_item
+    wait_for_connection
 )
 from hub.src.hub_assistant import HubAssistant
 from hub.src.registry_server import registry_server
 from hub.src.voice_interface import (
     hablar,
     ERROR_AUDIO_PATH,
+    ONLINE_AUDIO_PATH,
+    OFFLINE_AUDIO_PATH,
     TELLME_AUDIO_PATH
 )
 from hub.src.assistant_connection import check_assistant_connection
@@ -64,7 +67,8 @@ def main(trigger, word, timeout, verbose):
     conn_thread.start()
     logging.info("Hilo de conexión a internet iniciado.")
 
-    wait_for_item(status, "online")
+    # Antes de esperar el servidor de registro, verificamos conexión
+    wait_for_connection()
 
     # Iniciamos servidor de registro
     rs_process = threading.Thread(target=registry_server,
@@ -73,12 +77,18 @@ def main(trigger, word, timeout, verbose):
     rs_process.start()
     logging.info("Hilo de servidor de registro iniciado.")
 
+    # Función que espera el detonador del asistente.
     wait_for_trigger = define_trigger_waiter(trigger, word, BUTTON_GPIO_PIN)
 
     try:
 
-        with HubAssistant(DEVICE_MODEL_ID, DEVICE_ID) as hub_assistant:
+        # Antes de activar el asistente, verificamos que el servicio
+        # de audio esté activo.
+        hablar(text=None, cache=ONLINE_AUDIO_PATH)
+        status["speak"] = True
 
+        with HubAssistant(DEVICE_MODEL_ID, DEVICE_ID) as hub_assistant:
+            
             # Esperamos por un detonador para la primer conversación.
             keep_conversation = False
 
@@ -86,7 +96,7 @@ def main(trigger, word, timeout, verbose):
             while True:
 
                 if not keep_conversation:
-                    wait_for_item(status, "online")
+                    wait_for_connection()
                     wait_for_trigger()
                     hablar(text=None, cache=TELLME_AUDIO_PATH)
 
