@@ -2,7 +2,6 @@ import logging
 import sys
 import pathlib
 import threading
-import os
 
 import click
 
@@ -80,10 +79,6 @@ def main(trigger, word, timeout, verbose):
 
         with HubAssistant(DEVICE_MODEL_ID, DEVICE_ID) as hub_assistant:
 
-            # Notificamos al servicio de systemd que el asistente pudo
-            # ejecutarse correctamente.
-            os.system("export RASPISTANT_HAS_RUN=TRUE")
-
             # Esperamos por un detonador para la primer conversación.
             keep_conversation = False
 
@@ -99,7 +94,6 @@ def main(trigger, word, timeout, verbose):
 
     except Exception as e:
         logging.error("Ocurrió un error inesperado en el asistente.")
-        hablar(text=None, cache=ERROR_AUDIO_PATH)
         raise e
 
 
