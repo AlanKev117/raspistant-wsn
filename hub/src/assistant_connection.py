@@ -8,8 +8,8 @@ from hub.src.voice_interface import (
     ONLINE_AUDIO_PATH
 )
 
-POLLING_PAUSE_TIME = 3
-CONNECTION_TEST_ADDRESS = "assistant.googleapis.com"
+POLLING_PAUSE_TIME = 5
+CONNECTION_TEST_ADDRESS = "www.google.com"
 CONNECTION_TEST_PORT = 80
 
 def check_assistant_connection(status, verbose):
@@ -19,40 +19,39 @@ def check_assistant_connection(status, verbose):
     
     connected = None
     notify = False
+    
+    # Polling de conexión a internet
+    while True:
 
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(5)
+        try:
+            s.connect((CONNECTION_TEST_ADDRESS, CONNECTION_TEST_PORT))
+        # Error externo de conexión
+        except socket.timeout:
+            notify = connected in (None, True)
+            connected = False
+        # Error interno de conexión
+        except:
+            continue
+        # Sin error
+        else:
+            notify = connected in (None, False)
+            connected = True
+        s.close()
         
-        # Polling de conexión a internet
-        while True:
-
-            try:
-                s.connect((CONNECTION_TEST_ADDRESS, CONNECTION_TEST_PORT))
-            # Error externo de conexión
-            except socket.timeout:
-                notify = connected in (None, True)
-                connected = False
-            # Error interno de conexión
-            except:
-                continue
-            # Sin error
+        # Actualiza indicadores de conexión
+        if notify:
+            if connected:
+                logger.info("Conectado a internet!")
+                status["online"] = True
+                audio_path = ONLINE_AUDIO_PATH
             else:
-                notify = connected in (None, False)
-                connected = True
+                logger.error("Sin conexion a internet!")
+                status["online"] = False
+                audio_path = OFFLINE_AUDIO_PATH
+            hablar(text=None, cache=audio_path)
 
-            # Actualiza indicadores de conexión
-            if notify:
-                if connected:
-                    logger.info("Conectado a internet!")
-                    status["online"] = True
-                    audio_path = ONLINE_AUDIO_PATH
-                else:
-                    logger.error("Sin conexion a internet!")
-                    status["online"] = False
-                    audio_path = OFFLINE_AUDIO_PATH
-                hablar(text=None, cache=audio_path)
-
-            # Tiempo de polling e inicio de espera para systemd
-            time.sleep(POLLING_PAUSE_TIME)
-            
+        # Tiempo de polling e inicio de espera para systemd
+        time.sleep(POLLING_PAUSE_TIME)
+        
