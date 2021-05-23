@@ -49,7 +49,7 @@ DIALOG_FOLLOW_ON = embedded_assistant_pb2.DialogStateOut.DIALOG_FOLLOW_ON
 CLOSE_MICROPHONE = embedded_assistant_pb2.DialogStateOut.CLOSE_MICROPHONE
 
 # gRPC deadline in seconds for Google Assistant API call
-DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
+DEFAULT_GRPC_DEADLINE = 20
 
 DEFAULT_LANGUAGE_CODE = "en-US"
 CREDENTIALS_PATH = os.path.join(
