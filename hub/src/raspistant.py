@@ -82,11 +82,6 @@ def main(trigger, word, timeout, verbose):
 
     try:
 
-        # Antes de activar el asistente, verificamos que el servicio
-        # de audio esté activo.
-        hablar(text=None, cache=ONLINE_AUDIO_PATH)
-        status["speak"] = True
-
         with HubAssistant(DEVICE_MODEL_ID, DEVICE_ID) as hub_assistant:
             
             # Esperamos por un detonador para la primer conversación.

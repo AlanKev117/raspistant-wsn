@@ -24,30 +24,27 @@ def check_assistant_connection(status, verbose):
     while True:
 
         # Polling de conexión a internet
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(5)
-        try:
-            s.connect((CONNECTION_TEST_ADDRESS, CONNECTION_TEST_PORT))
-        except (socket.gaierror, socket.timeout):
-            changed = connected
-            connected = False
-        else:
-            changed = not connected
-            connected = True
-        s.close()
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.settimeout(5)
+            try:
+                s.connect((CONNECTION_TEST_ADDRESS, CONNECTION_TEST_PORT))
+            except:
+                changed = connected
+                connected = False
+            else:
+                changed = not connected
+                connected = True
 
         # Actualiza indicadores de conexión
         if first_time or changed:
 
             if connected:
                 logger.info("Conectado a internet!")
-                if status["speak"]:
-                    hablar(text=None, cache=ONLINE_AUDIO_PATH)
+                hablar(text=None, cache=ONLINE_AUDIO_PATH)
                 status["online"] = True
             else:
                 logger.error("Sin conexion a internet!")
-                if status["speak"]:
-                    hablar(text=None, cache=OFFLINE_AUDIO_PATH)
+                hablar(text=None, cache=OFFLINE_AUDIO_PATH)
                 status["online"] = False
 
             first_time = False
