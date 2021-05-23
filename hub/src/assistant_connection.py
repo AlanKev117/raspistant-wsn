@@ -8,8 +8,6 @@ from hub.src.voice_interface import (
     ONLINE_AUDIO_PATH
 )
 
-from hub.src.triggers import speak_lock
-
 POLLING_PAUSE_TIME = 3
 CONNECTION_TEST_ADDRESS = "assistant.googleapis.com"
 CONNECTION_TEST_PORT = 80
@@ -53,9 +51,7 @@ def check_assistant_connection(status, verbose):
                     logger.error("Sin conexion a internet!")
                     status["online"] = False
                     audio_path = OFFLINE_AUDIO_PATH
-                speak_lock.acquire()
                 hablar(text=None, cache=audio_path)
-                speak_lock.release()
 
             # Tiempo de polling e inicio de espera para systemd
             time.sleep(POLLING_PAUSE_TIME)

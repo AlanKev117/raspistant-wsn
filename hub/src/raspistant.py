@@ -12,7 +12,6 @@ sys.path.append(PROJECT_DIR)
 
 from hub.src.triggers import (
     status,
-    speak_lock,
     define_trigger_waiter,
     wait_for_connection
 )
@@ -85,17 +84,11 @@ def main(trigger, word, timeout, verbose):
             # Esperamos por un detonador para la primer conversación.
             keep_conversation = False
 
-            speak_locked = False
-
             # Bucle de asistente.
             while True:
 
                 if not keep_conversation:
                     wait_for_connection()
-                    if speak_locked:
-                        speak_lock.release()
-                    speak_lock.acquire()
-                    speak_locked = True
                     wait_for_trigger()
                     hablar(text=None, cache=TELLME_AUDIO_PATH)
 

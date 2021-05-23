@@ -14,9 +14,6 @@ _recognizer = sr.Recognizer()
 # Será manejada por hilo de detección de conexión a internet.
 status = {"online": False}
 
-# Candado mutex de interfaz de voz para sincronizar el hilo principal con
-# el hilo de conexión
-speak_lock = Lock()
 
 def wait_for_hot_word(hot_word):
     # Microphone listening.
