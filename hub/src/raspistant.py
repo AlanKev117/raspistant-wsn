@@ -12,6 +12,7 @@ sys.path.append(PROJECT_DIR)
 
 from hub.src.triggers import (
     status,
+    speak_lock,
     define_trigger_waiter,
     wait_for_connection
 )
@@ -19,9 +20,6 @@ from hub.src.hub_assistant import HubAssistant
 from hub.src.registry_server import registry_server
 from hub.src.voice_interface import (
     hablar,
-    ERROR_AUDIO_PATH,
-    ONLINE_AUDIO_PATH,
-    OFFLINE_AUDIO_PATH,
     TELLME_AUDIO_PATH
 )
 from hub.src.assistant_connection import check_assistant_connection
@@ -60,6 +58,9 @@ def main(trigger, word, timeout, verbose):
     # Configuración del logger
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
 
+    # Verificamos que los argumentos de activación sean válidos
+    wait_for_trigger = define_trigger_waiter(trigger, word, BUTTON_GPIO_PIN)
+
     # Iniciamos detector de conexión a internet.
     conn_thread = threading.Thread(target=check_assistant_connection,
                                    args=(status, verbose >= 2),
@@ -77,9 +78,6 @@ def main(trigger, word, timeout, verbose):
     rs_process.start()
     logging.info("Hilo de servidor de registro iniciado.")
 
-    # Función que espera el detonador del asistente.
-    wait_for_trigger = define_trigger_waiter(trigger, word, BUTTON_GPIO_PIN)
-
     try:
 
         with HubAssistant(DEVICE_MODEL_ID, DEVICE_ID) as hub_assistant:
@@ -87,11 +85,17 @@ def main(trigger, word, timeout, verbose):
             # Esperamos por un detonador para la primer conversación.
             keep_conversation = False
 
+            speak_locked = False
+
             # Bucle de asistente.
             while True:
 
                 if not keep_conversation:
                     wait_for_connection()
+                    if speak_locked:
+                        speak_lock.release()
+                    speak_lock.acquire()
+                    speak_locked = True
                     wait_for_trigger()
                     hablar(text=None, cache=TELLME_AUDIO_PATH)
 

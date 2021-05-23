@@ -1,11 +1,10 @@
 import logging
 import sys
+from threading import Lock
 
 import speech_recognition as sr
 import click
 from gpiozero import Button
-
-from hub.src.voice_interface import hablar
 
 
 # Recognizer for trigger word.
@@ -13,8 +12,11 @@ _recognizer = sr.Recognizer()
 
 # Bandera de estado de conexión a internet.
 # Será manejada por hilo de detección de conexión a internet.
-status = {"online": False, "speak": False}
+status = {"online": False}
 
+# Candado mutex de interfaz de voz para sincronizar el hilo principal con
+# el hilo de conexión
+speak_lock = Lock()
 
 def wait_for_hot_word(hot_word):
     # Microphone listening.
