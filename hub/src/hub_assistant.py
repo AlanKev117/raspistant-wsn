@@ -73,6 +73,8 @@ def create_conversation_stream():
         sample_width=audio_helpers.DEFAULT_AUDIO_SAMPLE_WIDTH,
     )
 
+    conversation_stream.volume_percentage = 100
+
     return conversation_stream
 
 
