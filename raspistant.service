@@ -1,0 +1,17 @@
+[Unit]
+Description=Raspistant Hub Service
+After=multi-user.target
+
+[Service]
+User=pi
+Group=pi
+Type=simple
+Restart=on-failure
+KillMode=control-group
+KillSignal=SIGKILL
+ExecStart=/usr/bin/python3.7 /home/pi/raspistant-wsn/hub/src/raspistant.py -v
+Environment=DISPLAY=:0
+
+[Install]
+WantedBy=multi-user.target
+

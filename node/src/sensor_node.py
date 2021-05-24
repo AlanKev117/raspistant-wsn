@@ -1,11 +1,9 @@
 import logging
-import os
 import threading
 import sys
 import pathlib
 
 import click
-from gpiozero import Button
 from rpyc.utils.server import ThreadedServer
 from rpyc.utils.helpers import classpartial
 from rpyc.utils.registry import UDPRegistryClient
@@ -46,40 +44,30 @@ def main(node_name, sensor_type, port, timeout, verbose):
 def sensor_node_process(node_name, sensor_type, port, timeout, verbose):
     
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
-
-    # Habilitamos apagado por botón integrado.
-    try:
-        button = Button(19, hold_time=10)
-        button.when_held = lambda: os.system("sudo halt")
-    except:
-        logging.warning("Tu dispositivo no podrá ser apagado mediante botón")
     
+    # Hilo de conexión
+    conn_thread = threading.Thread(target=check_node_connection, 
+                                   args=((verbose >= 2,)), 
+                                   daemon=True)
+    conn_thread.start()
+    logging.info(f"Hilo de detección de conexión a red local iniciado.")
+
+    # Preparamos el servicio de acuerdo con el tipo de sensor.
     sensor_types = {
         "dummy": DummySensor,
         "pir": PIRSensor,
         "hall": HallSensor
     }
-
     sensor = sensor_types[sensor_type](node_name)
     service = classpartial(SensorNodeService, sensor, verbose)
-    status = {"online": False}
 
-
-    # Hilo de conexión
-    conn_thread = threading.Thread(target=check_node_connection, 
-                                   args=(status, verbose >= 2), 
-                                   daemon=True)
-    conn_thread.start()
-    logging.info(f"Hilo de detección de conexión a red local iniciado.")
-
-    while not status["online"]:
-        pass
-
-    # Hilo de servicio de medición + cliente de registro
+    # Loggers para servicio de medición y cliente de registro
     service_logger = logging.getLogger(f"NODE_SERVICE/{node_name}")
     service_logger.setLevel(logging.INFO if verbose else logging.WARNING)
     udp_logger = logging.getLogger("REGCLNT/UDP")
     udp_logger.setLevel(logging.INFO if verbose >= 2 else logging.WARNING)
+
+    # Hilo de servicio de medición con su cliente de registro
     t = ThreadedServer(service, 
                        port=port,
                        registrar=UDPRegistryClient(timeout=timeout,
@@ -88,7 +76,7 @@ def sensor_node_process(node_name, sensor_type, port, timeout, verbose):
     t.start()
     logging.info(f"Hilo de servicio de medición iniciado.")
 
-    # Desactiva pin de entrada de sensor
+    # Desactiva pin de entrada de sensor al finalizar proceso.
     sensor.deactivate()
 
 

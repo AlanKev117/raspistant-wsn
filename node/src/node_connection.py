@@ -7,14 +7,14 @@ from gpiozero import LED
 CONNECTION_LED_PIN = 25
 
 
-def check_node_connection(status, verbose):
+def check_node_connection(verbose):
 
     logger = logging.getLogger("NODE_CONNECTION")
     logger.setLevel(logging.INFO if verbose else logging.WARNING)
 
-    connected = False
+    connected = None
     changed = False
-    first_time = True
+    
     led = LED(CONNECTION_LED_PIN)
 
     while True:
@@ -27,22 +27,18 @@ def check_node_connection(status, verbose):
                                      stderr=subprocess.STDOUT,
                                      shell=True).decode()
         if ip == "\n":
-            changed = connected
+            changed = connected in (True, None)
             connected = False
         else:
-            changed = not connected
+            changed = connected in (False, None)
             connected = True
 
         # Actualiza indicadores de conexión
-        if first_time or changed:
+        if changed:
 
             if connected:
                 logger.info("Conectado a la red local!")
-                status["online"] = True
                 led.on()
             else:
                 logger.error("Sin conexion a la red local")
-                status["online"] = False
                 led.off()
-
-            first_time = False
