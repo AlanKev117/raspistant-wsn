@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from random import randint
 
-from gpiozero import DigitalInputDevice, DigitalOutputDevice
+from gpiozero import DigitalInputDevice
 
 PIR_PIN = 24
 HALL_PIN = 23
