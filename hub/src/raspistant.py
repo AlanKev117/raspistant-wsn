@@ -16,7 +16,7 @@ from hub.src.registry_server import registry_server
 
 # Información de la entidad registrada en la consola de acciones de Google
 DEVICE_MODEL_ID = "wsn-hub"
-DEVICE_ID = "raspistant-wsn-hub"
+DEVICE_ID = "pi-hub"
 
 # Botón para realizar las consultas, si es necesario
 BUTTON_GPIO_PIN = 19
