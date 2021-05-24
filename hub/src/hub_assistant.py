@@ -16,6 +16,7 @@
 """Sample that implements a gRPC client for the Google Assistant API."""
 
 import concurrent.futures
+from hub.src.voice_interface import hablar
 import json
 import logging
 import os
@@ -41,6 +42,7 @@ from googlesamples.assistant.grpc import (
 )
 
 from hub.src.hub_device_handler import create_hub_device_handler
+from hub.src.voice_interface import ENTER_AUDIO_PATH, EXIT_AUDIO_PATH
 
 ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
 END_OF_UTTERANCE = embedded_assistant_pb2.AssistResponse.END_OF_UTTERANCE
@@ -138,11 +140,14 @@ class HubAssistant(object):
         # Callback for device actions.
         self.device_handler = create_hub_device_handler(device_id)
 
+
     def __enter__(self):
+        hablar(text=None, cache=ENTER_AUDIO_PATH)
         return self
 
     def __exit__(self, etype, e, traceback):
         if e:
+            hablar(text=None, cache=EXIT_AUDIO_PATH)
             return False
         self.conversation_stream.close()
 
@@ -153,7 +158,7 @@ class HubAssistant(object):
             return True
         return False
 
-    @retry(reraise=True, stop=stop_after_attempt(3),
+    @retry(reraise=True, stop=stop_after_attempt(5),
            retry=retry_if_exception(is_grpc_error_unavailable))
     def assist(self):
         """Send a voice request to the Assistant and playback the response.

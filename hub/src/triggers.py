@@ -1,19 +1,14 @@
 import logging
 import sys
-from threading import Lock
 
-import speech_recognition as sr
 import click
+import speech_recognition as sr
 from gpiozero import Button
 
+from hub.src.voice_interface import TRIGGER_AUDIO_PATH, reproducir_audio
 
 # Recognizer for trigger word.
 _recognizer = sr.Recognizer()
-
-# Bandera de estado de conexión a internet.
-# Será manejada por hilo de detección de conexión a internet.
-status = {"online": False}
-
 
 def wait_for_hot_word(hot_word):
     # Microphone listening.
@@ -44,16 +39,11 @@ def wait_for_button_pressed_and_released(button):
     button.wait_for_release()
 
 
-def wait_for_connection():
-    global status
-    while not status["online"]:
-        pass
-
-
 def get_trigger_function(trigger_message, waiter):
     def trigger_function():
         print(trigger_message)
         waiter()
+        reproducir_audio(TRIGGER_AUDIO_PATH)
     return trigger_function
 
 

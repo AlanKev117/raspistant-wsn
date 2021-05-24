@@ -4,24 +4,15 @@ import pathlib
 import threading
 
 import click
-from grpc import Status
 
 # Ruta del proyecto agregada a PATH para imports estáticos
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
 sys.path.append(PROJECT_DIR)
 
-from hub.src.triggers import (
-    status,
-    define_trigger_waiter,
-    wait_for_connection
-)
+from hub.src.triggers import define_trigger_waiter
 from hub.src.hub_assistant import HubAssistant
 from hub.src.registry_server import registry_server
-from hub.src.voice_interface import (
-    hablar,
-    TELLME_AUDIO_PATH
-)
-from hub.src.assistant_connection import check_assistant_connection
+
 
 # Información de la entidad registrada en la consola de acciones de Google
 DEVICE_MODEL_ID = "wsn-hub"
@@ -60,24 +51,14 @@ def main(trigger, word, timeout, verbose):
     # Verificamos que los argumentos de activación sean válidos
     wait_for_trigger = define_trigger_waiter(trigger, word, BUTTON_GPIO_PIN)
 
-    # Iniciamos detector de conexión a internet.
-    conn_thread = threading.Thread(target=check_assistant_connection,
-                                   args=(status, verbose >= 2),
-                                   daemon=True)
-    conn_thread.start()
-    logging.info("Hilo de conexión a internet iniciado.")
-
-    # Antes de esperar el servidor de registro, verificamos conexión
-    wait_for_connection()
-
-    # Iniciamos servidor de registro
-    rs_process = threading.Thread(target=registry_server,
-                                  args=(18811, timeout, verbose >= 2),
-                                  daemon=True)
-    rs_process.start()
-    logging.info("Hilo de servidor de registro iniciado.")
-
     try:
+
+        # Iniciamos servidor de registro
+        rs_process = threading.Thread(target=registry_server,
+                                    args=(18811, timeout, verbose >= 2),
+                                    daemon=True)
+        rs_process.start()
+        logging.info("Servidor de registro iniciado.")
 
         with HubAssistant(DEVICE_MODEL_ID, DEVICE_ID) as hub_assistant:
             
@@ -88,9 +69,7 @@ def main(trigger, word, timeout, verbose):
             while True:
 
                 if not keep_conversation:
-                    wait_for_connection()
                     wait_for_trigger()
-                    hablar(text=None, cache=TELLME_AUDIO_PATH)
 
                 keep_conversation = hub_assistant.assist()
 

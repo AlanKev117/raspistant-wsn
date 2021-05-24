@@ -26,7 +26,8 @@
                 "trigger": {
                     "queryPatterns": [
                         "descubre nodos sensores",
-                        "descubrir nodos sensores"
+                        "descubrir nodos sensores",
+                        "encuentra mis nodos"
                     ]
                 }
             },
@@ -72,7 +73,7 @@
                 "trigger": {
                     "queryPatterns": [
                         "listar nodos sensores",
-                        "lista nodos sensores"
+                        "listar? nodos sensores"
                     ]
                 }
             },
