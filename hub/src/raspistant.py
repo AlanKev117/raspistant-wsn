@@ -25,6 +25,7 @@ BUTTON_GPIO_PIN = 19
 @click.command()
 @click.option('--trigger',
               default="button",
+              show_default=True,
               type=click.Choice(["button", "key", "word"]),
               help=(('Forma de activar el asistente')))
 @click.option('--word',
