@@ -1,9 +1,8 @@
-grpcio==1.10
 google_assistant_sdk==0.6.0
 google-assistant-grpc==0.2.1
 google-auth-oauthlib>=0.1.0,<0.3
 urllib3[secure]>=1.21,<2
-sounddevice>=0.3.7,<0.4
+sounddevice==0.4.1
 futures>=3.1.1,<4
 tenacity==4.12.0
 pathlib2==2.3.5
@@ -14,3 +13,4 @@ gTTS==2.2.2
 gpiozero==1.6.2
 RPi.GPIO==0.7.0
 pigpio==1.78
+grpcio==1.10

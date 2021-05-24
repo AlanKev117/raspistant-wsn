@@ -4,19 +4,12 @@ import subprocess
 
 from gtts import gTTS
 
-ONLINE_AUDIO_PATH = pathlib.Path(
-    __file__).parent.parent/"assets"/"online.mp3"
-OFFLINE_AUDIO_PATH = pathlib.Path(
-    __file__).parent.parent/"assets"/"offline.mp3"
-ERROR_AUDIO_PATH = pathlib.Path(
-    __file__).parent.parent/"assets"/"error.mp3"
-TELLME_AUDIO_PATH = pathlib.Path(
-    __file__).parent.parent/"assets"/"tellme.mp3"
-SERVICE_AUDIO_PATH = pathlib.Path(
-    __file__).parent.parent/"assets"/"service.mp3"
-SHUTDOWN_AUDIO_PATH = pathlib.Path(
-    __file__).parent.parent/"assets"/"shutdown.mp3"
-
+ENTER_AUDIO_PATH = pathlib.Path(
+    __file__).parent.parent/"assets"/"enter.mp3"
+EXIT_AUDIO_PATH = pathlib.Path(
+    __file__).parent.parent/"assets"/"exit.mp3"
+TRIGGER_AUDIO_PATH = pathlib.Path(
+    __file__).parent.parent/"assets"/"trigger.mp3"
 
 def generar_audio(audio_path, text, slow=False, lang="es"):
     """Sintetiza un archivo de audio con el contenido, idioma y velocidad
@@ -45,19 +38,19 @@ def generar_audio(audio_path, text, slow=False, lang="es"):
 
 def reproducir_audio(audio_path):
     """Reproduce un audio encontrado en la ruta proporcionada
-    invocando el plugin del reproductor vlc para Python.
+    invocando el reproductor mpg123
 
     Args:
         audio_path: La ruta al archivo de audio a reproducir
 
     Raises:
-        FileNotFoundError: Si el archivo de audio o el comando vlc 
+        FileNotFoundError: Si el archivo de audio o el comando mpg123 
             no se encuentran
     """
     try:
         audio_file = pathlib.Path(audio_path)
         if audio_file.exists():
-            subprocess.run(["cvlc", audio_file, "--play-and-exit"],
+            subprocess.run(["mpg123", audio_file],
                            stdout=subprocess.DEVNULL,
                            stderr=subprocess.DEVNULL,
                            check=True)
@@ -80,7 +73,7 @@ def hablar(text, slow=False, lang="es", cache=None):
             sin conexión en un futuro.
 
     Raises:
-        FileNotFoundError: Si el archivo de audio a reproducir o el comando vlc 
+        FileNotFoundError: Si el archivo de audio a reproducir o el comando mpg123 
             no se encuentran o si la ruta del archivo destino no puede ser 
             accedida al sintetizar audio
         gTTSError: Si hubo un error en la petición al servidor de síntesis al
@@ -107,18 +100,11 @@ def hablar(text, slow=False, lang="es", cache=None):
 
 
 if __name__ == "__main__":
-    offline_msg = ("No tengo conexión a internet. "
-                   "Revisa que todo esté en orden con tu módem y "
-                   "que tu asistente tenga los datos de red adecuados.")
-    online_msg = "Estoy en línea."
-    error_msg = "Ocurrió un error inesperado en el asistente."
-    tellme_msg = "Dime."
-    service_msg = "No me pude conectar al servicio de asistencia de voz."
-    shutdown_msg = "Apagando tu dispositivo. Hasta pronto."
+    exit_msg = ("Lo siento, hubo un problema, "
+                "en un momento estaré disponible")
+    enter_msg = "Estoy lista para ayudarte"
+    trigger_msg = "Dime"
 
-    generar_audio(OFFLINE_AUDIO_PATH, offline_msg)
-    generar_audio(ONLINE_AUDIO_PATH, online_msg)
-    generar_audio(ERROR_AUDIO_PATH, error_msg)
-    generar_audio(TELLME_AUDIO_PATH, tellme_msg)
-    generar_audio(SERVICE_AUDIO_PATH, service_msg)
-    generar_audio(SHUTDOWN_AUDIO_PATH, shutdown_msg)
+    generar_audio(EXIT_AUDIO_PATH, exit_msg)
+    generar_audio(ENTER_AUDIO_PATH, enter_msg)
+    generar_audio(TRIGGER_AUDIO_PATH, trigger_msg)

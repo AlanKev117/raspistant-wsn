@@ -16,6 +16,7 @@
 """Sample that implements a gRPC client for the Google Assistant API."""
 
 import concurrent.futures
+from hub.src.voice_interface import hablar
 import json
 import logging
 import os
@@ -41,7 +42,7 @@ from googlesamples.assistant.grpc import (
 )
 
 from hub.src.hub_device_handler import create_hub_device_handler
-from hub.src.voice_interface import SERVICE_AUDIO_PATH, hablar
+from hub.src.voice_interface import ENTER_AUDIO_PATH, EXIT_AUDIO_PATH
 
 ASSISTANT_API_ENDPOINT = 'embeddedassistant.googleapis.com'
 END_OF_UTTERANCE = embedded_assistant_pb2.AssistResponse.END_OF_UTTERANCE
@@ -49,13 +50,11 @@ DIALOG_FOLLOW_ON = embedded_assistant_pb2.DialogStateOut.DIALOG_FOLLOW_ON
 CLOSE_MICROPHONE = embedded_assistant_pb2.DialogStateOut.CLOSE_MICROPHONE
 
 # gRPC deadline in seconds for Google Assistant API call
-DEFAULT_GRPC_DEADLINE = 60 * 3 + 5
+DEFAULT_GRPC_DEADLINE = 30
 
 DEFAULT_LANGUAGE_CODE = "en-US"
 CREDENTIALS_PATH = os.path.join(
     click.get_app_dir('google-oauthlib-tool'), 'credentials.json')
-DEVICE_CONFIG_PATH = os.path.join(
-    click.get_app_dir('googlesamples-assistant'), 'device_config.json')
 
 
 def create_conversation_stream():
@@ -76,6 +75,8 @@ def create_conversation_stream():
         sample_width=audio_helpers.DEFAULT_AUDIO_SAMPLE_WIDTH,
     )
 
+    conversation_stream.volume_percentage = 100
+
     return conversation_stream
 
 
@@ -91,7 +92,6 @@ def create_grpc_channel():
         logging.error('Error loading credentials: %s', e)
         logging.error('Run google-oauthlib-tool to initialize '
                       'new OAuth 2.0 credentials.')
-        hablar(text=None, cache=SERVICE_AUDIO_PATH)
         sys.exit(-1)
 
     # Create an authorized gRPC channel.
@@ -100,35 +100,6 @@ def create_grpc_channel():
     logging.info('Connecting to %s', ASSISTANT_API_ENDPOINT)
 
     return grpc_channel
-
-
-def fetch_device_data():
-    try:
-        with open(DEVICE_CONFIG_PATH) as f:
-            device = json.load(f)
-            device_id = device['id']
-            device_model_id = device['model_id']
-            logging.info("Using device model %s and device id %s",
-                         device_model_id,
-                         device_id)
-    except Exception as e:
-        cmd = "googlesamples-assistant-devicetool register-device --help"
-        logging.error('Error fetching device data: %s', e)
-        logging.error(f'Run {cmd} to learn how to register a new device')
-        logging.error(f"""Then, run again this program with the args
-                      --device-model-id and --device-id that you chose.
-                      Otherwise, save those in the file {DEVICE_CONFIG_PATH}
-                      like this: 
-                        {{
-                            "id": "<your device id>",
-                            "model_id": "<your device model id>",
-                            "client_type": "SDK_SERVICE"
-                        }}
-                      """)
-        sys.exit(-1)
-
-    return device_model_id, device_id
-
 
 class HubAssistant(object):
     """Hub Assitant that supports conversations and device actions.
@@ -141,9 +112,6 @@ class HubAssistant(object):
     def __init__(self, device_model_id, device_id):
 
         self.language_code = DEFAULT_LANGUAGE_CODE
-
-        if not device_model_id or not device_id:
-            device_model_id, device_id = fetch_device_data()
 
         self.device_model_id = device_model_id
         self.device_id = device_id
@@ -172,11 +140,14 @@ class HubAssistant(object):
         # Callback for device actions.
         self.device_handler = create_hub_device_handler(device_id)
 
+
     def __enter__(self):
+        hablar(text=None, cache=ENTER_AUDIO_PATH)
         return self
 
     def __exit__(self, etype, e, traceback):
         if e:
+            hablar(text=None, cache=EXIT_AUDIO_PATH)
             return False
         self.conversation_stream.close()
 
@@ -187,7 +158,7 @@ class HubAssistant(object):
             return True
         return False
 
-    @retry(reraise=True, stop=stop_after_attempt(3),
+    @retry(reraise=True, stop=stop_after_attempt(5),
            retry=retry_if_exception(is_grpc_error_unavailable))
     def assist(self):
         """Send a voice request to the Assistant and playback the response.
