@@ -25,7 +25,8 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "(descubre|descubir|encuentra) (mis)? nodos (sensores)?"
+                        "descubrir nodos sensores",
+                        "encuentra mis nodos"
                     ]
                 }
             },
@@ -70,8 +71,8 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "lista(r)? nodos sensores",
-                        "(qué|cuáles) nodos (sensores)? hay en (mi)? casa"
+                        "listar nodos sensores",
+                        "qué nodos hay en casa"
                     ]
                 }
             },
@@ -116,7 +117,10 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "(quita|quitar|olvida|olvidar|desconecta|desconectar) (el)? (nodo|sensor) $SchemaOrg_Text:sensor"
+                        "elimina nodo $SchemaOrg_Text:sensor",
+                        "elimina sensor $SchemaOrg_Text:sensor",
+                        "borrar nodo $SchemaOrg_Text:sensor",
+                        "borrar sensor $SchemaOrg_Text:sensor"
                     ]
                 }
             },
@@ -161,7 +165,7 @@
                 ],
                 "trigger": {
                     "queryPatterns": [
-                        "obtener estado de $SchemaOrg_Text:sensor",
+                        "dime el estado de $SchemaOrg_Text:sensor",
                         "consulta el nodo $SchemaOrg_Text:sensor"
                     ]
                 }
