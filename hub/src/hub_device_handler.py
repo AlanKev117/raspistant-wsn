@@ -1,5 +1,4 @@
-"""
-    Este módulo contiene todas las device actions que se pueden invocar mediante
+""" Este módulo contiene todas las device actions que se pueden invocar mediante
     el asistente de voz.
 
     Para crear una nueva device action, basta con crear una función dentro de la
@@ -8,17 +7,16 @@
     función. También es necesario agregar el decorador @hub_device_handler.command()
     para especificar a cual action pertenece dentro del archivo antes mencionado.
 
-
 """
 import logging
 import time
+
 from googlesamples.assistant.grpc import device_helpers
 from hub.src.rpc_client import RPCClient
 from hub.src.voice_interface import hablar
 
 def create_hub_device_handler(device_id):
-    """
-        Crea el device handler que se encargará de ejecutar las device actions 
+    """ Crea el device handler que se encargará de ejecutar las device actions 
         personalizadas que se mandarán a llamar desde el asistente de voz.
         Si el comando de voz no es soportado por el asistente de Google,
         aquí deberás crear una device action que soporte el comando y realice
@@ -34,7 +32,6 @@ def create_hub_device_handler(device_id):
                 comandos personalizados que se agregaron.
     """
     
-    #   Se crea el manejador
     hub_device_handler = device_helpers.DeviceRequestHandler(device_id)
 
     #   Se crea un cliente RPC para conectarse con los nodos sensores
@@ -44,8 +41,7 @@ def create_hub_device_handler(device_id):
     #   archivo "actions.json"
     @hub_device_handler.command('descubrir_nodos')
     def descubrir_nodos(nada):
-        """
-            Descubre los nodos que están conectados a la misma red del asistente de voz.
+        """ Descubre los nodos que están conectados a la misma red del asistente de voz.
             
             Esta función usa el cliente RPC para enviar una peticion a la red para
             encontrar los nodos sensores que se encuentran actualmente registrados en el
@@ -67,7 +63,6 @@ def create_hub_device_handler(device_id):
             nodos_msg = "Se encontraron %d nodos" % cantidad_nodos
         logging.info(nodos_msg)
 
-        #   Se reproduce un mensaje para informar al usuario cuantos nodos se encontraron
         hablar(nodos_msg)
         
         # Manejo de nodos con nombre repetido
@@ -89,12 +84,18 @@ def create_hub_device_handler(device_id):
 
     @hub_device_handler.command('listar_nodos')
     def listar_nodos(nada):
+        """ Lista los nodos sensores que se encontraron previamente con la funcion
+            descubrir_nodos()
+            
+            Esta funcion recorre el diccionario almacenado en el cliente RPC del asistente
+            y lista cada uno de los sensores que éstán registrados, mencionando su nombre
+            propio asignado al iniciar el nodo sensor.
+        """
         logging.info("Listando nodos sensores disponibles")
-
         lista = list(client.get_available_nodes().keys())
         cantidad_lista = len(lista)
         
-        # Notificación de nodos a listar
+        # Listado de nodos dictados por el asistente de voz
         if cantidad_lista == 0:
             logging.info("Sin nodos sensores guardados")
             hablar("No tengo nodos sensores guardados")
@@ -111,6 +112,15 @@ def create_hub_device_handler(device_id):
 
     @hub_device_handler.command('desconectar_nodo')
     def desconectar_nodo(sensor_name):
+        """ Desconectar un nodo sensor del asistente.
+
+            Elimina un nodo sensor del diccionario de nodos disponibles para que
+            ya no sea posible acceder a el.
+
+            Args:
+                sensor_name:
+                    Nombre propio del sensor que se quiere desconectar.
+        """
         try:
             logging.info("Desconectando nodo sensor %s" % sensor_name)
             client.forget_sensor(sensor_name.lower())
@@ -121,12 +131,24 @@ def create_hub_device_handler(device_id):
 
     @hub_device_handler.command('consultar_nodo')
     def consultar_nodo(sensor_name):
-        
+        """ Obtiene la medicion de un nodo sensor.
+
+            Esta funcion hace una llamada a procedimiento remoto mediante el
+            cliente RPC para obtener lo que el sensor está midiendo en ese
+            instante, el sensor le regresa el dato al asistente y este lo procesa
+            para dictarlo por medio de voz al usuario.
+
+            Args:
+                sensor_name:
+                    Nombre propio del sensor que se quiere consultar.
+
+        """
         logging.info("Obteniendo datos del nodo sensor %s" % sensor_name)
 
         try:
             measurement, sensor_type = client.get_sensor_reading(
                 sensor_name.lower())
+            
             if sensor_type == "HallSensor":
                 state = "cerrado" if measurement == True else "abierto"
                 res = f"El estado de {sensor_name} es: {state}"
