@@ -13,10 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Sample that implements a gRPC client for the Google Assistant API."""
+""" Este código implementa un cliente gRPC para el API de Asistente de Google
+
+    En éste módulo se importan las bibliotecas, módulos y se inicializan o
+    establecen algunos parámetros para su ejecución e interacción con el API 
+    de Google assistant.
+
+"""
 
 import concurrent.futures
-from hub.src.voice_interface import hablar
 import json
 import logging
 import os
@@ -41,6 +46,7 @@ from googlesamples.assistant.grpc import (
     audio_helpers,
 )
 
+from hub.src.voice_interface import hablar
 from hub.src.hub_device_handler import create_hub_device_handler
 from hub.src.voice_interface import ENTER_AUDIO_PATH, EXIT_AUDIO_PATH
 
@@ -49,7 +55,7 @@ END_OF_UTTERANCE = embedded_assistant_pb2.AssistResponse.END_OF_UTTERANCE
 DIALOG_FOLLOW_ON = embedded_assistant_pb2.DialogStateOut.DIALOG_FOLLOW_ON
 CLOSE_MICROPHONE = embedded_assistant_pb2.DialogStateOut.CLOSE_MICROPHONE
 
-# gRPC deadline in seconds for Google Assistant API call
+# Tiempo límite en segundos para la llamada al API Google Assistant
 DEFAULT_GRPC_DEADLINE = 30
 
 DEFAULT_LANGUAGE_CODE = "en-US"
@@ -58,7 +64,14 @@ CREDENTIALS_PATH = os.path.join(
 
 
 def create_conversation_stream():
-    # Configure audio source and sink.
+    """ Crea un flujo de conversación con la fuente que se configura para
+        la entrada y salida de audio.
+        
+        Returns:
+            El objeto "conversation_stream" que servirá como la interfaz para
+            establecer la conversación con el asistente de voz de Google.
+    """
+
     audio_source = audio_sink = audio_helpers.SoundDeviceStream(
         sample_rate=audio_helpers.DEFAULT_AUDIO_SAMPLE_RATE,
         sample_width=audio_helpers.DEFAULT_AUDIO_SAMPLE_WIDTH,
@@ -66,8 +79,9 @@ def create_conversation_stream():
         flush_size=audio_helpers.DEFAULT_AUDIO_DEVICE_FLUSH_SIZE
     )
 
-    # Create conversation stream with the given audio source and sink
-    # for recording query and playing back assistant answer
+    # Crea el flujo de conversación tomando la fuente de entrada y de salida
+    # del audio, además de otros parámetros por defecto que vienen ya con el 
+    # codigo del asistente de google.
     conversation_stream = audio_helpers.ConversationStream(
         source=audio_source,
         sink=audio_sink,
@@ -81,7 +95,15 @@ def create_conversation_stream():
 
 
 def create_grpc_channel():
-    # Load OAuth 2.0 credentials.
+    """ Crea el canal grpc que se comunicará con la API de Google Assistant
+        para obtener las consultas que se realicen con el asistente de voz.
+
+        Returns:
+            El objeto grpc_channel que será el canal de comunicación para
+            enviar peticiones a la API de Goole.
+    """
+
+    # Carga las credenciales OAuth 2.0 para acceder a la API de Google Assistant
     try:
         with open(CREDENTIALS_PATH, 'r') as f:
             credentials = google.oauth2.credentials.Credentials(token=None,
@@ -94,7 +116,7 @@ def create_grpc_channel():
                       'new OAuth 2.0 credentials.')
         sys.exit(-1)
 
-    # Create an authorized gRPC channel.
+    # Una vez autorizado el acceso, se crea el canal grpc de comunicación a la API.
     grpc_channel = google.auth.transport.grpc.secure_authorized_channel(
         credentials, http_request, ASSISTANT_API_ENDPOINT)
     logging.info('Connecting to %s', ASSISTANT_API_ENDPOINT)
@@ -102,42 +124,55 @@ def create_grpc_channel():
     return grpc_channel
 
 class HubAssistant(object):
-    """Hub Assitant that supports conversations and device actions.
+    """ Asistente central que soporta conversaciones con el usuario y ejecuta
+        las device actions.
 
-    Args:
-      device_model_id: identifier of the device model.
-      device_id: identifier of the registered device instance.
+        Attributes:
+            language_code:
+                Lenguaje por default del asistente
+            device_model_id:
+                Identificador del modelo del dispositivo.
+            device_id: 
+                Identificador de la instancia registrada del dispositivo.
+            conversation_stream:
+                Flujo de conversación del asistente.
+            conversation_state:
+                BLOB obtenido en la respuesta AssistResponse que da al Asistente
+                un contexto del estado actual de la conversación multi-Assist()-RPC
+                Este valor, junto con MicrophoneMode, soporta una conversación mas
+                natural con el Asistente.
+            is_new_conversation:
+                Resetea para que la primer conversación
+            grpc_channel:
+                Crea el cliente gRPC para comunicarse con la API Google Assistant.
+            assistant:
+                Instancia del asistente de voz
+            deadline:
+                Tiempo de respuesta límite
+            device_handler:
+                Objeto para llamar a las device actions mediante callback
     """
 
     def __init__(self, device_model_id, device_id):
+        """ Constructor donde se inicializan los parámetros de la clase.
 
+            Args:
+              device_model_id:
+                Identificador del modelo del dispositivo.
+              device_id: 
+                Identificador de la instancia registrada del dispositivo.
+        """
         self.language_code = DEFAULT_LANGUAGE_CODE
-
         self.device_model_id = device_model_id
         self.device_id = device_id
-
         self.conversation_stream = create_conversation_stream()
-
-        # Opaque blob provided in AssistResponse that,
-        # when provided in a follow-up AssistRequest,
-        # gives the Assistant a context marker within the current state
-        # of the multi-Assist()-RPC "conversation".
-        # This value, along with MicrophoneMode, supports a more natural
-        # "conversation" with the Assistant.
         self.conversation_state = None
-
-        # Force reset of first conversation.
         self.is_new_conversation = True
-
-        # Create Google Assistant API gRPC client.
         grpc_channel = create_grpc_channel()
         self.assistant = embedded_assistant_pb2_grpc.EmbeddedAssistantStub(
             grpc_channel
         )
-
         self.deadline = DEFAULT_GRPC_DEADLINE
-
-        # Callback for device actions.
         self.device_handler = create_hub_device_handler(device_id)
 
 
@@ -152,18 +187,28 @@ class HubAssistant(object):
         self.conversation_stream.close()
 
     def is_grpc_error_unavailable(e):
+        """ Revisa la instancia del canal grp para comprobar si hay un
+            error en el, si lo hay, levanta la excepcion y nos regresa
+            True.
+
+            Returns:
+                Booleano que nos indica si hay o no un error con la conexión
+                de gRPC.
+        """
         is_grpc_error = isinstance(e, grpc.RpcError)
         if is_grpc_error and (e.code() == grpc.StatusCode.UNAVAILABLE):
             logging.error('grpc unavailable error: %s', e)
             return True
         return False
 
+
     @retry(reraise=True, stop=stop_after_attempt(5),
            retry=retry_if_exception(is_grpc_error_unavailable))
     def assist(self):
-        """Send a voice request to the Assistant and playback the response.
+        """ Envía una solicitud de voz al asistente y reproduce la respuesta.
 
-        Returns: True if conversation should continue.
+            Returns: 
+                True si la conversación puede continuar.
         """
         continue_conversation = False
         device_actions_futures = []
@@ -178,8 +223,14 @@ class HubAssistant(object):
                 yield c
             logging.debug('Reached end of AssistRequest iteration.')
 
-        # This generator yields AssistResponse proto messages
-        # received from the gRPC Google Assistant API.
+        """ Este generador reúne las respuestas del Asistente recibidas del
+            canal gRPC de la API Google Assistant.
+            Detecta el fin de la petición por comando de voz, envía la solicitud
+            de transcripción del comando y nos regresa una respuesta de acuerdo
+            a nuestra petición.
+            Además si la petición invoca alguna device action, espera la ejecución
+            de ésta y nos regresa una respuesta adecuada.
+        """
         for resp in self.assistant.Assist(iter_log_assist_requests(),
                                           self.deadline):
             assistant_helpers.log_assist_response_without_audio(resp)
@@ -230,7 +281,11 @@ class HubAssistant(object):
         return continue_conversation
 
     def gen_assist_requests(self):
-        """Yields: AssistRequest messages to send to the API."""
+        """ Genera el AssistRequest para comunicarse con la API
+            
+            Yields: 
+                Mensajes del AssistRequest para enviar a la API.
+        """
 
         config = embedded_assistant_pb2.AssistConfig(
             audio_in_config=embedded_assistant_pb2.AudioInConfig(
@@ -253,11 +308,12 @@ class HubAssistant(object):
             )
         )
 
-        # Continue current conversation with later requests.
+        # Continua la conversación actual con peticiones posteriores.
         self.is_new_conversation = False
-        # The first AssistRequest must contain the AssistConfig
-        # and no audio data.
+        # El primer AssistRequest debe contener la configuración y no
+        # los datos de audio.
         yield embedded_assistant_pb2.AssistRequest(config=config)
         for data in self.conversation_stream:
-            # Subsequent requests need audio data, but not config.
+            # Las peticiones subsecuentes necesitan los datos de audio, pero no la
+            # configuración.
             yield embedded_assistant_pb2.AssistRequest(audio_in=data)

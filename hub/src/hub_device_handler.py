@@ -1,22 +1,62 @@
+"""
+    Este módulo contiene todas las device actions que se pueden invocar mediante
+    el asistente de voz.
+
+    Para crear una nueva device action, basta con crear una función dentro de la
+    función create_hub_device_handler(), con los parámetros definidos en el archivo
+    "actions.json" y establecer lo que quiere que se haga una vez invocada la
+    función. También es necesario agregar el decorador @hub_device_handler.command()
+    para especificar a cual action pertenece dentro del archivo antes mencionado.
+
+
+"""
 import logging
 import time
-
 from googlesamples.assistant.grpc import device_helpers
-
 from hub.src.rpc_client import RPCClient
 from hub.src.voice_interface import hablar
 
 def create_hub_device_handler(device_id):
+    """
+        Crea el device handler que se encargará de ejecutar las device actions 
+        personalizadas que se mandarán a llamar desde el asistente de voz.
+        Si el comando de voz no es soportado por el asistente de Google,
+        aquí deberás crear una device action que soporte el comando y realice
+        las acciones esperadas.
 
+        Args:  
+            device_id:
+                Identificador del dispositivo registrado en la API de Google Assistant
+
+        Returns:
+            hub_device_handler:
+                Objeto que maneja las operaciones que hace el asistente de voz con los
+                comandos personalizados que se agregaron.
+    """
+    
+    #   Se crea el manejador
     hub_device_handler = device_helpers.DeviceRequestHandler(device_id)
 
+    #   Se crea un cliente RPC para conectarse con los nodos sensores
     client = RPCClient()
 
+    #   Decorador de la función, para identificar a que comando pertenece en el 
+    #   archivo "actions.json"
     @hub_device_handler.command('descubrir_nodos')
     def descubrir_nodos(nada):
-
+        """
+            Descubre los nodos que están conectados a la misma red del asistente de voz.
+            
+            Esta función usa el cliente RPC para enviar una peticion a la red para
+            encontrar los nodos sensores que se encuentran actualmente registrados en el
+            servidor de registro y a los cuales se puede tener acceso mediante una llamada
+            a procedimiento remoto.
+        """
         logging.info("Descubriendo nodos sensores.")
-        
+
+        #   Se envía la petición al cliente RPC, y con ésta se obtiene el numero de nodos
+        #   distintos en la red y tambien nos regresa la cantidad de nodos con un nombre
+        #   repetido.
         nodos, repetidos = client.discover_sensor_nodes()
         
         # Notificar cantidad de nodos
@@ -26,6 +66,8 @@ def create_hub_device_handler(device_id):
         else:
             nodos_msg = "Se encontraron %d nodos" % cantidad_nodos
         logging.info(nodos_msg)
+
+        #   Se reproduce un mensaje para informar al usuario cuantos nodos se encontraron
         hablar(nodos_msg)
         
         # Manejo de nodos con nombre repetido
