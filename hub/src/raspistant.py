@@ -1,3 +1,13 @@
+""" Programa Principal del Hub Asistente.
+    
+    Este código se encarga de inicializar y ejecutar el programa del 
+    asistente de voz y que a su vez se conecta a los nodos sensores e 
+    interactua con ellos mediante RPC.
+
+    Uso típico:
+      python raspistant.py
+"""
+
 import logging
 import sys
 import pathlib
@@ -21,7 +31,7 @@ DEVICE_ID = "pi-hub"
 # Botón para realizar las consultas, si es necesario
 BUTTON_GPIO_PIN = 19
 
-
+# Configuraciones Iniciales.
 @click.command()
 @click.option('--trigger',
               default="button",
@@ -45,6 +55,23 @@ BUTTON_GPIO_PIN = 19
                     "ninguna, sin logs; una, logs de asistente; dos o más, "
                     "logs de asistente y conexión."))
 def main(trigger, word, timeout, verbose):
+    """ Funcion principal
+        
+        Esta función es la que dispara el proceso principal que va a ejecutar
+        el programa.
+
+        Args:
+          trigger:
+            Activador para el lanzamiento del asistente.
+          word:
+            Palabra clave para activar el asistente.
+          timeout:
+            Intervalo de tiempo en segundos que el asistente recordará un nodo
+            que se acaba de registrar.
+          verbose:
+            Define el comportamiento de los logs.
+
+    """
 
     # Configuración del logger
     logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
