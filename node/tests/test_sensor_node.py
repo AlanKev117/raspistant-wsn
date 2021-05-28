@@ -47,7 +47,7 @@ def sensor_node_thread(node_name,
                             daemon=True)
 
 
-def test_sensor_node(sensor_node_thread):
+def test_sensor_node(sensor_node_thread, node_name):
     """Ejecuta un nodo sensor, se prueba que pueda enviar mediciones y sus
     metadatos.
     """
