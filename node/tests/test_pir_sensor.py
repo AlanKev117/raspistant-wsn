@@ -7,7 +7,7 @@ def pir_sensor_name():
     return "pir"
 
 @pytest.fixture
-def pir_sensor():
+def pir_sensor(pir_sensor_name):
     return PIRSensor(pir_sensor_name)
 
 
