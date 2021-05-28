@@ -34,9 +34,9 @@ def get_reading_events(pir_sensor):
         second_reading = pir_sensor.get_reading()
 
 
-def test_hall_sensor(pir_sensor):
-    get_node_data()
-    get_reading_events()
+def test_hall_sensor(pir_sensor, pir_sensor_name):
+    get_node_data(pir_sensor, pir_sensor_name)
+    get_reading_events(pir_sensor)
     pir_sensor.deactivate()
     try:
         pir_sensor.get_reading()
