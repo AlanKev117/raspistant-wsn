@@ -1,3 +1,8 @@
+""" Triggers
+
+    Éste código implementa los lanzadores que activan el asistente de voz
+"""
+
 import logging
 import sys
 
@@ -11,6 +16,7 @@ from hub.src.voice_interface import TRIGGER_AUDIO_PATH, reproducir_audio
 _recognizer = sr.Recognizer()
 
 def wait_for_hot_word(hot_word):
+
     # Microphone listening.
     text = ""
     with sr.Microphone() as source:
