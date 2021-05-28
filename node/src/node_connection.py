@@ -41,4 +41,4 @@ def check_node_connection(verbose):
                     led.on()
                 else:
                     logger.error("Sin conexion a la red local")
-                led.off()
+                    led.off()
