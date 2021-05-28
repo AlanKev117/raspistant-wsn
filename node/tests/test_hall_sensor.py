@@ -22,7 +22,7 @@ def get_node_data(hall_sensor, hall_sensor_name):
     assert stype == "HallSensor"
 
 
-def get_reading_events(hall_sensor, caplog):
+def get_reading_events(hall_sensor):
 
     initial_reading = hall_sensor.get_reading()
     assert initial_reading in (True, False)
