@@ -39,7 +39,7 @@ def get_reading_events(hall_sensor):
     assert third_reading in (True, False)
 
     while second_reading == third_reading:
-        second_reading = hall_sensor.get_reading()
+        third_reading = hall_sensor.get_reading()
     logging.info(f"Medición final: {third_reading}")
 
 

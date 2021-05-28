@@ -35,7 +35,7 @@ def get_reading_events(pir_sensor):
     assert third_reading in (True, False)
 
     while second_reading == third_reading:
-        second_reading = pir_sensor.get_reading()
+        third_reading = pir_sensor.get_reading()
     logging.info(f"Medición final: {third_reading}")
 
 
