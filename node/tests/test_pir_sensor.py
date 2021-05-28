@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 from node.src.sensor import PIRSensor
@@ -20,21 +22,27 @@ def get_node_data(pir_sensor, pir_sensor_name):
 def get_reading_events(pir_sensor):
     initial_reading = pir_sensor.get_reading()
     assert initial_reading in (True, False)
+    logging.info(f"Medición inicial: {initial_reading}")
 
     second_reading = pir_sensor.get_reading()
     assert second_reading in (True, False)
 
     while initial_reading == second_reading:
         second_reading = pir_sensor.get_reading()
-    
+    logging.info(f"Nueva medición: {second_reading}")
+
     third_reading = pir_sensor.get_reading()
     assert third_reading in (True, False)
 
     while second_reading == third_reading:
         second_reading = pir_sensor.get_reading()
+    logging.info(f"Medición final: {third_reading}")
 
 
-def test_hall_sensor(pir_sensor, pir_sensor_name):
+def test_hall_sensor(pir_sensor, pir_sensor_name, caplog):
+    
+    caplog.set_level(logging.INFO)
+
     get_node_data(pir_sensor, pir_sensor_name)
     get_reading_events(pir_sensor)
     pir_sensor.deactivate()
