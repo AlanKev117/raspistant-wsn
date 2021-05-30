@@ -1,6 +1,6 @@
 import time
 from threading import Thread
-from subprocess import Popen
+from multiprocessing import Process
 
 import pytest
 
@@ -24,7 +24,7 @@ def verbose_level():
 
 
 @pytest.fixture
-def raspistant_thread(timeout_seconds, verbose_level):
+def raspistant_subprocess(timeout_seconds, verbose_level):
     """Hilo que representa el asistente de voz con todas sus funcionalidades.
 
     Args:
@@ -33,11 +33,11 @@ def raspistant_thread(timeout_seconds, verbose_level):
         verbose_level: nivel que indica la cantidad de logs a mostrar por
             parte del assistente.
     """
-    return Thread(target=raspistant_process, args=(DEVICE_MODEL_ID,
-                                                   DEVICE_ID,
-                                                   "button",
-                                                   timeout_seconds,
-                                                   verbose_level))
+    return Process(target=raspistant_process, args=(DEVICE_MODEL_ID,
+                                                    DEVICE_ID,
+                                                    "button",
+                                                    timeout_seconds,
+                                                    verbose_level))
 
 
 @pytest.fixture
@@ -78,16 +78,16 @@ def sensor_nodes(repeated_name, timeout_seconds):
                    daemon=True)]
 
 
-def test_raspistant(sensor_nodes, raspistant_thread):
+def test_raspistant(sensor_nodes, raspistant_subprocess):
     """Prueba el funcionamiento del proceso principal de asistencia de voz.
     Se invocan 4 nodos sensores de los cuales 2 tienen nombre repetido.
 
     Args:
         sensor_nodes: nodos sensores de simulación a ser invocados.
-        raspistant_thread: hilo del asistente de voz.
+        raspistant_subprocess: proceso del asistente de voz.
     """
 
-    raspistant_thread.start()
+    raspistant_subprocess.start()
 
     for node in sensor_nodes:
         node.start()
@@ -98,3 +98,5 @@ def test_raspistant(sensor_nodes, raspistant_thread):
     # Tiempo de interacción en el que se verifica el correcto funcionamiento
     # del asistente con base en los logs mostrados.
     time.sleep(120)
+    raspistant_subprocess.terminate()
+    raspistant_subprocess.close()

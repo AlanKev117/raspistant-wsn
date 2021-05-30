@@ -6,6 +6,7 @@ from googlesamples.assistant.grpc import device_helpers
 from hub.src.rpc_client import RPCClient
 from hub.src.voice_interface import hablar
 
+
 def create_hub_device_handler(device_id):
 
     hub_device_handler = device_helpers.DeviceRequestHandler(device_id)
@@ -16,9 +17,9 @@ def create_hub_device_handler(device_id):
     def descubrir_nodos(nada):
 
         logging.info("Descubriendo nodos sensores.")
-        
+
         nodos, repetidos = client.discover_sensor_nodes()
-        
+
         # Notificar cantidad de nodos
         cantidad_nodos = len(nodos)
         if cantidad_nodos == 1:
@@ -27,7 +28,7 @@ def create_hub_device_handler(device_id):
             nodos_msg = "Se encontraron %d nodos" % cantidad_nodos
         logging.info(nodos_msg)
         hablar(nodos_msg)
-        
+
         # Manejo de nodos con nombre repetido
         cantidad_repetidos = len(repetidos)
         if cantidad_repetidos > 0:
@@ -40,8 +41,7 @@ def create_hub_device_handler(device_id):
             repetidos_msg = (f"Encontré {articulo} siguiente{ese} nodo{ese} "
                              f"repetido{ese}: {nombres_repetidos}. "
                              f"Asegúrate de que todos los nodos tengan un "
-                             f"nombre distinto entre ellos e intenta "
-                             f"descubrirlos de nuevo.")
+                             f"nombre único.")
             logging.warning(repetidos_msg)
             hablar(repetidos_msg)
 
@@ -51,7 +51,7 @@ def create_hub_device_handler(device_id):
 
         lista = list(client.get_available_nodes().keys())
         cantidad_lista = len(lista)
-        
+
         # Notificación de nodos a listar
         if cantidad_lista == 0:
             logging.info("Sin nodos sensores guardados")
@@ -65,7 +65,6 @@ def create_hub_device_handler(device_id):
                 time.sleep(1)
                 logging.info("Nodo %d: %s" % (i+1, lista[i]))
                 hablar("Nodo %d: %s" % (i+1, lista[i]))
-        
 
     @hub_device_handler.command('desconectar_nodo')
     def desconectar_nodo(sensor_name):
@@ -76,10 +75,9 @@ def create_hub_device_handler(device_id):
             # No existe la llave o fue imposible conectarse.
             logging.warning(f"Nodo <{sensor_name}> no registrado")
 
-
     @hub_device_handler.command('consultar_nodo')
     def consultar_nodo(sensor_name):
-        
+
         logging.info("Obteniendo datos del nodo sensor %s" % sensor_name)
 
         try:

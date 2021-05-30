@@ -16,6 +16,13 @@ def hall_sensor(hall_sensor_name):
 
 
 def get_node_data(hall_sensor, hall_sensor_name):
+    """Prueba que se puedan obtener metadatos del sensor: nombre y tipo.
+
+    Args:
+        hall_sensor: objeto que representa al sensor.
+        hall_sensor_name: nombre a comparar el que se obtenga en la prueba.
+    """
+
     name = hall_sensor.get_name()
     stype = hall_sensor.get_type()
     assert name == hall_sensor_name
@@ -23,6 +30,12 @@ def get_node_data(hall_sensor, hall_sensor_name):
 
 
 def get_reading_events(hall_sensor):
+    """Detecta un par transiciones de estado del sensor. La prueba es exitosa
+    si esta función logra retornar.
+
+    Args:
+        hall_sensor: objeto que representa al sensor.
+    """
 
     initial_reading = hall_sensor.get_reading()
     assert initial_reading in (True, False)
@@ -44,7 +57,14 @@ def get_reading_events(hall_sensor):
 
 
 def test_hall_sensor(hall_sensor, hall_sensor_name, caplog):
+    """Prueba el funcionamiento de medición del sensor de efecto Hall
+    conectado a la tarjeta de desarrollo.
 
+    Args:
+        hall_sensor: objeto que representa al sensor.
+        hall_sensor_name: nombre del sensor.
+        caplog: fixture de configuración de logs durante la prueba.
+    """
     caplog.set_level(logging.INFO)
 
     get_node_data(hall_sensor, hall_sensor_name)
