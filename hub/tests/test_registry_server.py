@@ -2,6 +2,8 @@ import threading
 import time
 from multiprocessing import Process
 
+from rpyc.utils.factory import DiscoveryError
+
 import pytest
 import rpyc
 
@@ -84,7 +86,11 @@ def test_registry_server(registry_server_thread,
     time.sleep(5)
 
     # Se descubren nodos sensores
-    device = rpyc.discover("SENSORNODE")
+    try:
+        device = rpyc.discover("SENSORNODE")
+    except DiscoveryError:
+        pytest.fail("Debería haber un nodo disponible", pytrace=True)
+
     assert len(device) > 0
 
     # Termina el proceso de nodo. Se espera el tiempo de olvido y se descubren
@@ -92,7 +98,7 @@ def test_registry_server(registry_server_thread,
     node_process.terminate()
     time.sleep(registry_pruning_timeout)
 
-    device = rpyc.discover("SENSORNODE")
-    assert len(device) == 0
+    with pytest.raises(DiscoveryError):
+        device = rpyc.discover("SENSORNODE")
 
     node_process.close()

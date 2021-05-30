@@ -80,7 +80,10 @@ def test_sensor_node(sensor_node_thread, node_name):
     time.sleep(5)
 
     # Se descubre y se conecta al nodo sensor
-    node_connection = rpyc.connect_by_service("SENSORNODE")
+    try:
+        node_connection = rpyc.connect_by_service("SENSORNODE")
+    except:
+        pytest.fail("Deberían haber nodos activos", pytrace=True)
 
     # Se obtienen datos del nodo.
     name = node_connection.root.get_sensor_name()
