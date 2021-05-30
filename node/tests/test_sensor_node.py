@@ -1,6 +1,6 @@
 import threading
 import time
-import subprocess
+import os
 
 import rpyc
 import pytest
@@ -72,8 +72,7 @@ def test_sensor_node(sensor_node_thread, node_name):
     """
 
     # Se inicia servidor de registro genérico
-    subprocess.run("rpyc_registry.py",
-                   creationflags=subprocess.DETACHED_PROCESS)
+    os.spawnl(os.P_NOWAIT, "rpyc_registry.py")
 
     # Inicia nodo sensor con tiempo de ajuste para emisión de mensajes de
     # registro

@@ -2,7 +2,7 @@ from hub.src.voice_interface import reproducir_audio
 import threading
 import time
 from threading import Thread
-import subprocess
+import os
 
 import pytest
 
@@ -63,8 +63,7 @@ def test_rpc_client(sensor_nodes, repeated_name):
     """
 
     # Se invoca servidor de registro genérico
-    subprocess.run("rpyc_registry.py",
-                   creationflags=subprocess.DETACHED_PROCESS)
+    os.spawnl(os.P_NOWAIT, "rpyc_registry.py")
 
     for node in sensor_nodes:
         node.start()
