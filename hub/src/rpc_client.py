@@ -1,13 +1,15 @@
 import logging
 
 import rpyc
+from rpyc.utils.registry import UDPRegistryClient
 
 class RPCClient:
     def __init__(self):
         self._available_nodes = {}
+        self._udp_discoverer = UDPRegistryClient()
 
     def discover_sensor_nodes(self):
-        nodes = rpyc.discover("SENSORNODE")
+        nodes = self._udp_discoverer.discover("SENSORNODE")
         self._available_nodes = {}
         repeated = []
         for node in nodes:
