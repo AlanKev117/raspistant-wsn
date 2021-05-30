@@ -1,6 +1,6 @@
 import threading
 import time
-import os
+from subprocess import Popen
 
 import rpyc
 import pytest
@@ -72,7 +72,7 @@ def test_sensor_node(sensor_node_thread, node_name):
     """
 
     # Se inicia servidor de registro genérico
-    os.spawnl(os.P_NOWAIT, "rpyc_registry.py")
+    pid = Popen(["rpyc_registry.py"]).pid
 
     # Inicia nodo sensor con tiempo de ajuste para emisión de mensajes de
     # registro
