@@ -65,17 +65,16 @@ def test_rpc_client(sensor_nodes, repeated_name):
 
     for node in sensor_nodes:
         node.start()
-    time.sleep(5)
     client = RPCClient()
 
     # Tiempo de tolerancia para registro
-    time.sleep(5)
+    time.sleep(15)
 
     nodes, repeated = client.discover_sensor_nodes()
     assert len(nodes) == 2 and repeated_name not in nodes
     assert [repeated_name] == repeated
 
-    names = nodes.keys()
+    names = list(nodes.keys())
 
     reading, stype = client.get_sensor_reading(names[0])
     assert reading in (True, False)
