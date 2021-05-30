@@ -68,7 +68,7 @@ def test_hall_sensor(hall_sensor, hall_sensor_name, caplog):
     caplog.set_level(logging.INFO)
 
     get_node_data(hall_sensor, hall_sensor_name)
-    get_reading_events(hall_sensor, caplog)
+    get_reading_events(hall_sensor)
     hall_sensor.deactivate()
     try:
         hall_sensor.get_reading()
