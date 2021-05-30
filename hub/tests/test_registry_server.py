@@ -1,72 +1,98 @@
+import threading
 import time
 from multiprocessing import Process
 
 import pytest
-from rpyc.utils.registry import UDPRegistryClient
+import rpyc
 
 from hub.src.registry_server import registry_server
-from sensor_node.src.sensor_node import sensor_node
-
-# Argumentos del servidor de registro
-PORT = 18811  # puerto por defecto
-PRUNING_TIME = 3 # segundos de tiempo de eliminación
-
-# Argumentos del nodo sensor
-SENSOR_NAME = "prueba"
-SENSOR_TYPE = "dummy"
-SENSOR_SERVER_PORT = 4000
+from node.src.sensor_node import sensor_node_process
 
 
 @pytest.fixture
-def registry_server_process():
-    rs_process = Process(target=registry_server,
-                         args=(PORT, PRUNING_TIME),
-                         daemon=True)
-    rs_process.start()
-
-    return rs_process
+def registry_server_port():
+    return 18811
 
 
 @pytest.fixture
-def sensor_node_process():
-    sn_process = Process(target=sensor_node,
-                         args=(SENSOR_NAME, SENSOR_TYPE, SENSOR_SERVER_PORT),
-                         daemon=True)
-    sn_process.start()
-
-    # Tiempo de tolerancia para que el nodo se registre en el servidor
-    time.sleep(1)
-
-    return sn_process
+def registry_pruning_timeout():
+    return 30
 
 
-def test_registry_server(registry_server_process, sensor_node_process):
+@pytest.fixture
+def registry_verbose():
+    return True
+
+
+@pytest.fixture
+def registry_server_thread(registry_server_port,
+                           registry_pruning_timeout,
+                           registry_verbose):
+    """Fixture con hilo de servidor de registro.
+
+    Args:
+        registry_server_port: puerto por el que el servidor recibe 
+            mensajes de registro.
+        registry_pruning_timeout: tiempo que tarda el servidor en olvidar 
+            un nodo tras emitir un mensaje de registro.
+        registry_verbose: indica si el hilo produce logs o no.
     """
-    Se prueba que el nodo sensor pueda registrarse al servidor de registro y
-    que este pueda proporcionar los datos de red de dicho nodo cuando se le
-    consulte.
+    return threading.Thread(target=registry_server,
+                            args=(registry_server_port,
+                                  registry_pruning_timeout,
+                                  registry_verbose),
+                            daemon=True)
+
+
+@pytest.fixture
+def node_process(registry_pruning_timeout):
+    """Fixture con el proceso de un nodo sensor de simulación.
+
+    Args:
+        registry_pruning_timeout: tiempo en minutos que tarda cada mensaje de
+            registro en ser enviado.
     """
+    return Process(target=sensor_node_process,
+                   args=("aleatorio",  # node_name,
+                         "dummy",  # sensor_type,
+                         3000,  # node_port,
+                         registry_pruning_timeout // 60,  # timeout_minutes,
+                         True),  # verbose
+                   daemon=True)
 
-    # Iniciamos cliente UDP para servidor de registro
-    rc = UDPRegistryClient() # el puerto por defecto es PORT
 
-    # Solicitamos los datos del nodo que se creó
-    nodes = rc.discover("SENSORNODE")
+def test_registry_server(registry_server_thread,
+                         node_process,
+                         registry_pruning_timeout):
+    """Prueba el servidor de registro. Que habilite el descubrimiento de nodos
+    en la red y que funcionen adecuadamente los temporizadores de olvido de
+    nodos sensores.
 
-    # Verificamos que recibimos datos de nodos
-    assert len(nodes) > 0, "Nodo sensor no encontrado"
+    Args:
+        registry_server_thread: fixture que contiene el hilo del servidor de 
+            registro.
+        node_process: fixture con el proceso de nun nodo sensor de simulación
+        registry_pruning_timeout: tiempo en segundos que tardará el servidor
+            en olvidar un nodo tras este haber enviado su último mensaje de
+            registro.
+    """
+    # Inician ambos procesos
+    registry_server_thread.start()
+    node_process.start()
 
-    # Verificamos que sean los datos del nodo inicializado
-    _, sensor_port = nodes[0]
-    assert sensor_port == SENSOR_SERVER_PORT, "Nodo sensor no coincide"
+    # Tiempo de tolerancia para registro
+    time.sleep(5)
 
-    sensor_node_process.terminate()
+    # Se descubren nodos sensores
+    device = rpyc.discover("SENSORNODE")
+    assert len(device) > 0
 
-    # Esperamos que el servidor de registro elimine el nodo sensor
-    time.sleep(PRUNING_TIME)
+    # Termina el proceso de nodo. Se espera el tiempo de olvido y se descubren
+    # de nuevo los nodos disponibles.
+    node_process.terminate()
+    time.sleep(registry_pruning_timeout)
 
-    # Descubrimos nuevamente nodos, no deberíamos encontrar ninguno
-    nodes = rc.discover("SENSORNODE")
-    assert len(nodes) == 0, "Se descubrieron nodos sensores desactivados"
+    device = rpyc.discover("SENSORNODE")
+    assert len(device) == 0
 
-    registry_server_process.terminate()
+    node_process.close()
