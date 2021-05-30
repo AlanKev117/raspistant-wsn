@@ -85,4 +85,4 @@ def test_rpc_client(sensor_nodes, repeated_name):
 
     client.forget_sensor(names[1])
     available = client.get_available_nodes()
-    assert names[1] not in nodes
+    assert names[1] not in available
