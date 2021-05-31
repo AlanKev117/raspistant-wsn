@@ -92,10 +92,13 @@ def test_raspistant(sensor_nodes, raspistant_subprocess, caplog):
 
     caplog.set_level(logging.INFO)
 
-    raspistant_subprocess.start()
-
+    # Inician los nodos sensores
     for node in sensor_nodes:
         node.start()
+
+    # Inicia el asistente 
+    raspistant_subprocess.start()
+
 
     # Tiempo de interacción en el que se verifica el correcto funcionamiento
     # del asistente con base en los logs mostrados.
