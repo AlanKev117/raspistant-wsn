@@ -44,14 +44,14 @@ def registry_server(port, pruning_timeout, verbose=False):
             Define el comportamiento de los logs.
     """
     # Creación de logger para servidor de registro
-    logger = logging.getLogger(f"REGSRV/UDP/{port}")
-    logger.setLevel(logging.DEBUG if verbose else logging.WARNING)
+  logger = logging.getLogger(f"REGSRV/UDP/{port}")
+  logger.setLevel(logging.DEBUG if verbose else logging.WARNING)
 
     # Creación e invocación de servidor de registro
-    server = UDPRegistryServer(port=port,
-                               pruning_timeout=pruning_timeout,
-                               logger=logger)
-    server.start()
+  server = UDPRegistryServer(port=port,
+                            pruning_timeout=pruning_timeout,
+                            logger=logger)
+  server.start()
 
 
 

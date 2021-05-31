@@ -1,3 +1,9 @@
+""" Conexión a internet en el nodo sensor
+
+    En este codigo se implementa una función que servirá
+    para checar si el nodo sensor está conectado a internet
+    
+"""
 import time
 import logging
 import subprocess
@@ -8,7 +14,17 @@ CONNECTION_LED_PIN = 25
 
 
 def check_node_connection(verbose):
+    """ Checar conexion a internet
 
+        Esta función revisa si hay conexión a la red local revisando
+        los datos de red del sistema operativo.
+        Si está conectado, enciende un led indicador y si no
+        lo está, el led permanece apagado.
+    
+        Args:
+            verbose:
+                Define el comportamiento de los logs.
+    """
     logger = logging.getLogger("NODE_CONNECTION")
     logger.setLevel(logging.INFO if verbose else logging.WARNING)
 

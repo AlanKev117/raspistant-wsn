@@ -1,3 +1,12 @@
+""" Programa Principal del Nodo sensor.
+    
+    Este código se encarga de inicializar y ejecutar el programa del 
+    nodo sensor y que a su vez se conecta a la red local del hogar 
+    para que el asistente los identifique y pueda interactuar con ellos.
+
+    Uso típico:
+      python sensor_node.py
+"""
 import logging
 import threading
 import sys
@@ -8,6 +17,7 @@ from rpyc.utils.server import ThreadedServer
 from rpyc.utils.helpers import classpartial
 from rpyc.utils.registry import UDPRegistryClient
 
+# Ruta del proyecto agregada a PATH para imports estáticos
 PROJECT_DIR = str(pathlib.Path(__file__).parent.parent.parent.resolve())
 sys.path.append(PROJECT_DIR)
 
@@ -15,6 +25,7 @@ from node.src.node_connection import check_node_connection
 from node.src.node_service import SensorNodeService
 from node.src.sensor import DummySensor, HallSensor, PIRSensor
 
+# Configuraciones Iniciales.
 @click.command()
 @click.option('--node-name', default="aleatorio",
               metavar='<nombre del sensor>', show_default=True,
@@ -38,11 +49,44 @@ from node.src.sensor import DummySensor, HallSensor, PIRSensor
                     "ninguna, sin logs; una, logs de nodo; dos o más, "
                     "logs de nodo y conexión."))
 def main(node_name, sensor_type, port, timeout, verbose):
+  """ Funcion principal
+        
+        Esta función es la que dispara el proceso principal que va a ejecutar
+        el programa.
+
+        Args:
+          node_name:
+            Nombre propio del nodo sensor.
+          sensor_type:
+            Tipo del nodo sensor.
+          port:
+            Puerto por el cual el nodo recibe las peticiones.
+          timeout:
+            Intervalo de tiempo en segundos que el asistente recordará un nodo
+            que se acaba de registrar.
+          verbose:
+            Define el comportamiento de los logs.
+  """  
+
     sensor_node_process(node_name, sensor_type, port, timeout, verbose)
 
 
 def sensor_node_process(node_name, sensor_type, port, timeout, verbose):
-    
+    """ Proceso principal del nodo sensor
+
+        Args:
+          node_name:
+            Nombre propio del nodo sensor.
+          sensor_type:
+            Tipo del nodo sensor.
+          port:
+            Puerto por el cual el nodo recibe las peticiones.
+          timeout:
+            Intervalo de tiempo en segundos que el asistente recordará un nodo
+            que se acaba de registrar.
+          verbose:
+            Define el comportamiento de los logs.
+  """  
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
     
     # Hilo de conexión
