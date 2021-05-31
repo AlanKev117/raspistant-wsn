@@ -1,3 +1,4 @@
+import logging
 import time
 from threading import Thread
 from multiprocessing import Process
@@ -78,7 +79,7 @@ def sensor_nodes(repeated_name, timeout_seconds):
                    daemon=True)]
 
 
-def test_raspistant(sensor_nodes, raspistant_subprocess):
+def test_raspistant(sensor_nodes, raspistant_subprocess, caplog):
     """Prueba el funcionamiento del proceso principal de asistencia de voz.
     Se invocan 4 nodos sensores de los cuales 2 tienen nombre repetido.
 
@@ -86,6 +87,8 @@ def test_raspistant(sensor_nodes, raspistant_subprocess):
         sensor_nodes: nodos sensores de simulación a ser invocados.
         raspistant_subprocess: proceso del asistente de voz.
     """
+
+    caplog.set_level(logging.INFO)
 
     raspistant_subprocess.start()
 
