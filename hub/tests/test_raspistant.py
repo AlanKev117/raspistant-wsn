@@ -44,7 +44,7 @@ def raspistant_subprocess(timeout_seconds, verbose_level):
 
 
 @pytest.fixture
-def sensor_nodes(repeated_name, timeout_seconds):
+def sensor_nodes(repeated_name):
     """Fixture con lista de hilos de nodos sensores. Consta de 
     dos nodos repetidos y dos nodos con nombre único.
 
@@ -55,29 +55,29 @@ def sensor_nodes(repeated_name, timeout_seconds):
                    args=(repeated_name,  # node_name,
                          "dummy",  # sensor_type,
                          3000,  # node_port,
-                         timeout_seconds / 60,  # timeout_minutes,
-                         True),  # verbose
+                         0,  # timeout_minutes,
+                         False),  # verbose
                    daemon=True),
             Thread(target=sensor_node_process,
                    args=(repeated_name,  # node_name,
                          "dummy",  # sensor_type,
                          4000,  # node_port,
-                         timeout_seconds / 60,  # timeout_minutes,
-                         True),  # verbose
+                         0,  # timeout_minutes,
+                         False),  # verbose
                    daemon=True),
             Thread(target=sensor_node_process,
                    args=("raro",  # node_name,
                          "dummy",  # sensor_type,
                          5000,  # node_port,
-                         timeout_seconds / 60,  # timeout_minutes,
-                         True),  # verbose
+                         0,  # timeout_minutes,
+                         False),  # verbose
                    daemon=True),
             Thread(target=sensor_node_process,
                    args=("curioso",  # node_name,
                          "dummy",  # sensor_type,
                          6000,  # node_port,
-                         timeout_seconds / 60,  # timeout_minutes,
-                         True),  # verbose
+                         0,  # timeout_minutes,
+                         False),  # verbose
                    daemon=True)]
 
 
@@ -92,13 +92,12 @@ def test_raspistant(sensor_nodes, raspistant_subprocess, caplog):
 
     caplog.set_level(logging.INFO)
 
-    # Inician los nodos sensores
-    for node in sensor_nodes:
-        node.start()
-
     # Inicia el asistente 
     raspistant_subprocess.start()
 
+    # Inician los nodos sensores
+    for node in sensor_nodes:
+        node.start()
 
     # Tiempo de interacción en el que se verifica el correcto funcionamiento
     # del asistente con base en los logs mostrados.
