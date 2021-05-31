@@ -94,7 +94,7 @@ def test_raspistant(sensor_nodes, raspistant_subprocess, caplog):
 
     # Inicia el asistente 
     raspistant_subprocess.start()
-
+    time.sleep(5)
     # Inician los nodos sensores
     for node in sensor_nodes:
         node.start()
