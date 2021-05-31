@@ -97,11 +97,8 @@ def test_raspistant(sensor_nodes, raspistant_subprocess, caplog):
     for node in sensor_nodes:
         node.start()
 
-    # Tiempo de tolerancia para registro
-    time.sleep(15)
-
     # Tiempo de interacción en el que se verifica el correcto funcionamiento
     # del asistente con base en los logs mostrados.
-    time.sleep(120)
+    time.sleep(180)
     # raspistant_subprocess.terminate()
     # raspistant_subprocess.close()
