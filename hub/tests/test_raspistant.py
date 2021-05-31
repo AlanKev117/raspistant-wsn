@@ -34,11 +34,13 @@ def raspistant_subprocess(timeout_seconds, verbose_level):
         verbose_level: nivel que indica la cantidad de logs a mostrar por
             parte del assistente.
     """
-    return Process(target=raspistant_process, args=(DEVICE_MODEL_ID,
-                                                    DEVICE_ID,
-                                                    "button",
-                                                    timeout_seconds,
-                                                    verbose_level))
+    return Process(target=raspistant_process,
+                   args=(DEVICE_MODEL_ID,
+                         DEVICE_ID,
+                         "button",
+                         timeout_seconds,
+                         verbose_level),
+                   daemon=True)
 
 
 @pytest.fixture
