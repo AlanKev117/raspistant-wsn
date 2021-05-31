@@ -34,13 +34,13 @@ def raspistant_subprocess(timeout_seconds, verbose_level):
         verbose_level: nivel que indica la cantidad de logs a mostrar por
             parte del assistente.
     """
-    return Process(target=raspistant_process,
-                   args=(DEVICE_MODEL_ID,
-                         DEVICE_ID,
-                         "button",
-                         timeout_seconds,
-                         verbose_level),
-                   daemon=True)
+    return Thread(target=raspistant_process,
+                  args=(DEVICE_MODEL_ID,
+                        DEVICE_ID,
+                        "button",
+                        timeout_seconds,
+                        verbose_level),
+                  daemon=True)
 
 
 @pytest.fixture
@@ -103,5 +103,5 @@ def test_raspistant(sensor_nodes, raspistant_subprocess, caplog):
     # Tiempo de interacción en el que se verifica el correcto funcionamiento
     # del asistente con base en los logs mostrados.
     time.sleep(120)
-    raspistant_subprocess.terminate()
-    raspistant_subprocess.close()
+    # raspistant_subprocess.terminate()
+    # raspistant_subprocess.close()
