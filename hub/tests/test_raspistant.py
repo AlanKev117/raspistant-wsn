@@ -1,4 +1,5 @@
 import logging
+from node.tests.test_sensor_node import timeout_minutes
 import time
 from threading import Thread
 from multiprocessing import Process
@@ -44,7 +45,7 @@ def raspistant_subprocess(timeout_seconds, verbose_level):
 
 
 @pytest.fixture
-def sensor_nodes(repeated_name):
+def sensor_nodes(repeated_name, timeout_seconds):
     """Fixture con lista de hilos de nodos sensores. Consta de 
     dos nodos repetidos y dos nodos con nombre único.
 
@@ -55,28 +56,28 @@ def sensor_nodes(repeated_name):
                    args=(repeated_name,  # node_name,
                          "dummy",  # sensor_type,
                          3000,  # node_port,
-                         0,  # timeout_minutes,
+                         timeout_seconds / 60,  # timeout_minutes,
                          False),  # verbose
                    daemon=True),
             Thread(target=sensor_node_process,
                    args=(repeated_name,  # node_name,
                          "dummy",  # sensor_type,
                          4000,  # node_port,
-                         0,  # timeout_minutes,
+                         timeout_seconds / 60,  # timeout_minutes,
                          False),  # verbose
                    daemon=True),
             Thread(target=sensor_node_process,
                    args=("raro",  # node_name,
                          "dummy",  # sensor_type,
                          5000,  # node_port,
-                         0,  # timeout_minutes,
+                         timeout_seconds / 60,  # timeout_minutes,
                          False),  # verbose
                    daemon=True),
             Thread(target=sensor_node_process,
                    args=("curioso",  # node_name,
                          "dummy",  # sensor_type,
                          6000,  # node_port,
-                         0,  # timeout_minutes,
+                         timeout_seconds / 60,  # timeout_minutes,
                          False),  # verbose
                    daemon=True)]
 
@@ -94,7 +95,7 @@ def test_raspistant(sensor_nodes, raspistant_subprocess, caplog):
 
     # Inicia el asistente 
     raspistant_subprocess.start()
-    time.sleep(5)
+
     # Inician los nodos sensores
     for node in sensor_nodes:
         node.start()
