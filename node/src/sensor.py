@@ -1,3 +1,12 @@
+""" Clase sensor
+    
+    Ésta clase implementa cada tipo de nodo que se ocupará
+    en el proyecto, con el fin de establecer sus atributos 
+    y obtener sus datos de las entradas de la tarjeta para 
+    tener su medición.
+
+"""
+
 from abc import ABC, abstractmethod
 from random import randint
 
@@ -30,7 +39,8 @@ class Sensor(ABC):
 
 
 class DummySensor(Sensor):
-
+    """ Clase que instancia un objeto de tipo sensor para hacer pruebas
+    """
     def __init__(self, name):
         self.name = name
 
@@ -48,7 +58,8 @@ class DummySensor(Sensor):
 
 
 class PIRSensor(Sensor):
-
+    """ Clase que instancia el objeto para el sensor de movimiento PIR
+    """
     def __init__(self, name):
         self.name = name
         self.pir_sensor = DigitalInputDevice(pin=PIR_PIN, pull_up=False)
@@ -66,7 +77,8 @@ class PIRSensor(Sensor):
         self.pir_sensor.close()
 
 class HallSensor(Sensor):
-
+    """ Clase que instancia el objeto para el sensor de efecto HALL
+    """
     def __init__(self, name):
         self.name = name
         self.hall_sensor = DigitalInputDevice(pin=HALL_PIN, pull_up=True)

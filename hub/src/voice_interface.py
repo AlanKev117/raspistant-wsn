@@ -16,15 +16,21 @@ def generar_audio(audio_path, text, slow=False, lang="es"):
     requeridas utilizando el servicio de síntesis de voz de Google.
 
     Args:
-        audio_path: La ruta destino del archivo de audio sintetizado
-        text: Contenido de texto a sintetizar
-        slow: Indica si el audio debería guardar una reproducción lenta
+        audio_path: 
+            La ruta destino del archivo de audio sintetizado
+        text: 
+            Contenido de texto a sintetizar
+        slow: 
+            Indica si el audio debería guardar una reproducción lenta
             del contenido
-        lang: Código del idioma en el que se sintetizará el audio requerido
+        lang: 
+            Código del idioma en el que se sintetizará el audio requerido
 
     Raises:
-        gTTSError: Si hubo un error en la petición al servidor de síntesis
-        FileNotFoundError: Si la ruta del archivo destino no puede ser accedida
+        gTTSError: 
+            Si hubo un error en la petición al servidor de síntesis
+        FileNotFoundError: 
+            Si la ruta del archivo destino no puede ser accedida
 
     """
     try:
@@ -41,11 +47,12 @@ def reproducir_audio(audio_path):
     invocando el reproductor mpg123
 
     Args:
-        audio_path: La ruta al archivo de audio a reproducir
+        audio_path: 
+            La ruta al archivo de audio a reproducir
 
     Raises:
-        FileNotFoundError: Si el archivo de audio o el comando mpg123 
-            no se encuentran
+        FileNotFoundError: 
+            Si el archivo de audio o el comando mpg123 no se encuentran
     """
     try:
         audio_file = pathlib.Path(audio_path)
@@ -66,17 +73,23 @@ def hablar(text, slow=False, lang="es", cache=None):
     """Reproduce una cadena de texto proporcionada en forma de audio.
 
     Args:
-        text: la cadena a ser sintetizada y pronunciada.
-        slow: indica si se debe prounciar lento o no.
-        lang: código del idioma en el que la cadena está escrita.
-        cache: indica la ruta para guardar el audio para ser usado de nuevo
+        text: 
+            la cadena a ser sintetizada y pronunciada.
+        slow: 
+            indica si se debe prounciar lento o no.
+        lang: 
+            código del idioma en el que la cadena está escrita.
+        cache: 
+            indica la ruta para guardar el audio para ser usado de nuevo
             sin conexión en un futuro.
 
     Raises:
-        FileNotFoundError: Si el archivo de audio a reproducir o el comando mpg123 
+        FileNotFoundError: 
+            Si el archivo de audio a reproducir o el comando mpg123 
             no se encuentran o si la ruta del archivo destino no puede ser 
             accedida al sintetizar audio
-        gTTSError: Si hubo un error en la petición al servidor de síntesis al
+        gTTSError: 
+            Si hubo un error en la petición al servidor de síntesis al
             sintetizar audio
     """
 
