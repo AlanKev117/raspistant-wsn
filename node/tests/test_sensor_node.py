@@ -1,43 +1,95 @@
-from multiprocessing import Process
+import threading
 import time
+from subprocess import Popen
 
-import pytest
 import rpyc
-from rpyc.utils.registry import UDPRegistryClient
+import pytest
 
-from sensor_node.src.sensor_node import sensor_node
-
-# Argumentos del nodo sensor
-SENSOR_NAME = "prueba"
-SENSOR_TYPE = "dummy"
-SENSOR_SERVER_PORT = 3333
+from node.src.sensor_node import sensor_node_process
 
 
 @pytest.fixture
-def sensor_node_process():
-    sn_process = Process(target=sensor_node,
-                         args=(SENSOR_NAME, SENSOR_TYPE, SENSOR_SERVER_PORT),
-                         daemon=True)
-    sn_process.start()
-    return sn_process
+def node_name():
+    return "aleatorio"
 
 
-def get_data_from_device(ip, port):
-    conn = rpyc.connect(ip, port)
-
-    reading = conn.root.get_sensor_reading()
-    name = conn.root.get_sensor_name()
-
-    conn.close()
-
-    return reading, name
+@pytest.fixture
+def sensor_type():
+    return "dummy"
 
 
-def test_sensor_node(sensor_node_process):
-    reading, name = get_data_from_device(ip="localhost",
-                                         port=SENSOR_SERVER_PORT)
+@pytest.fixture
+def node_port():
+    return 3000
 
-    assert reading in (True, False), "Measurement corrupted"
-    assert name == SENSOR_NAME, "Corrupted sensor name"
 
-    sensor_node_process.terminate()
+@pytest.fixture
+def timeout_minutes():
+    return 1
+
+
+@pytest.fixture
+def verbose():
+    return True
+
+
+@pytest.fixture
+def sensor_node_thread(node_name,
+                       sensor_type,
+                       node_port,
+                       timeout_minutes,
+                       verbose):
+    """Fixture que representa el nodo sensor a invocar durante la prueba.
+
+    Args:
+        node_name: nombre del nodo sensor.
+        sensor_type: tipo de sensor con el que el nodo hace mediciones.
+        node_port: puerto por el que el nodo escucha peticiones de medición.
+        timeout_minutes: tiempo en minutos que tarda el nodo en mandar
+            un mensaje de registro.
+    """
+    return threading.Thread(target=sensor_node_process,
+                            args=(node_name,
+                                  sensor_type,
+                                  node_port,
+                                  timeout_minutes,
+                                  verbose),
+                            daemon=True)
+
+
+def test_sensor_node(sensor_node_thread, node_name):
+    """Ejecuta un nodo sensor, se prueba que pueda enviar mediciones y sus
+    metadatos. Requiere que un servidor de registro se encuentre disponible en
+    la red local. Para ello, se puede ejecutar el script genérico
+    bin/rpyc_registry.py, incluido en la librería rpyc.
+
+    Nótese que el directorio 'bin' se refiere al directorio 'bin' de un 
+    ambiente virtual de Python, o bien, al directorio $HOME/.local/bin/
+
+    Args:
+        sensor_node_thread: fixture que simboliza el nodo sensor a invocar.
+        node_name: fixture que indica el nombre del nodeo a invocar.
+    """
+
+    # Se inicia servidor de registro genérico
+    pid = Popen(["rpyc_registry.py"]).pid
+
+    # Inicia nodo sensor con tiempo de ajuste para emisión de mensajes de
+    # registro
+    sensor_node_thread.start()
+    time.sleep(5)
+
+    # Se descubre y se conecta al nodo sensor
+    try:
+        node_connection = rpyc.connect_by_service("SENSORNODE")
+    except:
+        pytest.fail("Deberían haber nodos activos", pytrace=True)
+
+    # Se obtienen datos del nodo.
+    name = node_connection.root.get_sensor_name()
+    reading = node_connection.root.get_sensor_reading()
+    stype = node_connection.root.get_sensor_type()
+
+    assert name == node_name
+    assert stype == "DummySensor"
+    assert reading in (True, False)

@@ -56,6 +56,7 @@ class RPCClient:
                 repeated:
                     Lista de nombres repetidos que se encontraron
         """
+
         nodes = self._udp_discoverer.discover("SENSORNODE")
         self._available_nodes = {}
         repeated = []
@@ -97,6 +98,7 @@ class RPCClient:
                 sensor_type:
                     Tipo del nodo sensor consultado.
         """
+
         ip, port = self._available_nodes[sensor_name]
         logging.info("Conectando a {}:{}".format(ip, port))
         connection = rpyc.connect(ip, port)
@@ -108,7 +110,7 @@ class RPCClient:
     def get_available_nodes(self):
         return self._available_nodes
 
-    def forget_sensor(self,sensor_name):
+    def forget_sensor(self, sensor_name):
         """ Olvidar un nodo sensor
 
             Ésta función elimina un nodo sensor del diccionario de nodos disponibles
@@ -123,6 +125,7 @@ class RPCClient:
             Returns:
                 Booleano que indica si se eliminó el nodo sensor. 
         """
+
         if sensor_name in self._available_nodes: 
             self._available_nodes.pop(sensor_name)
             return True
