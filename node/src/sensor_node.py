@@ -49,24 +49,24 @@ from node.src.sensor import DummySensor, HallSensor, PIRSensor
                     "ninguna, sin logs; una, logs de nodo; dos o más, "
                     "logs de nodo y conexión."))
 def main(node_name, sensor_type, port, timeout, verbose):
-  """ Funcion principal
-        
-        Esta función es la que dispara el proceso principal que va a ejecutar
-        el programa.
+    """ Funcion principal
 
-        Args:
-          node_name:
+    Esta función es la que dispara el proceso principal que va a ejecutar
+    el programa.
+
+    Args:
+        node_name:
             Nombre propio del nodo sensor.
-          sensor_type:
+        sensor_type:
             Tipo del nodo sensor.
-          port:
+        port:
             Puerto por el cual el nodo recibe las peticiones.
-          timeout:
+        timeout:
             Intervalo de tiempo en segundos que el asistente recordará un nodo
             que se acaba de registrar.
-          verbose:
+        verbose:
             Define el comportamiento de los logs.
-  """  
+    """  
 
     sensor_node_process(node_name, sensor_type, port, timeout, verbose)
 
@@ -74,19 +74,19 @@ def main(node_name, sensor_type, port, timeout, verbose):
 def sensor_node_process(node_name, sensor_type, port, timeout, verbose):
     """ Proceso principal del nodo sensor
 
-        Args:
-          node_name:
+    Args:
+        node_name:
             Nombre propio del nodo sensor.
-          sensor_type:
+        sensor_type:
             Tipo del nodo sensor.
-          port:
+        port:
             Puerto por el cual el nodo recibe las peticiones.
-          timeout:
+        timeout:
             Intervalo de tiempo en segundos que el asistente recordará un nodo
             que se acaba de registrar.
-          verbose:
+        verbose:
             Define el comportamiento de los logs.
-  """  
+    """  
     logging.basicConfig(level=logging.INFO if verbose else logging.ERROR)
     
     # Hilo de conexión

@@ -20,7 +20,7 @@ def check_node_connection(verbose):
         los datos de red del sistema operativo.
         Si está conectado, enciende un led indicador y si no
         lo está, el led permanece apagado.
-    
+
         Args:
             verbose:
                 Define el comportamiento de los logs.
@@ -30,7 +30,7 @@ def check_node_connection(verbose):
 
     connected = None
     changed = False
-    
+
     with LED(CONNECTION_LED_PIN) as led:
 
         while True:
@@ -40,8 +40,8 @@ def check_node_connection(verbose):
 
             # Polling de conexión local
             ip = subprocess.check_output("hostname -I",
-                                        stderr=subprocess.STDOUT,
-                                        shell=True).decode()
+                                         stderr=subprocess.STDOUT,
+                                         shell=True).decode()
             if ip == "\n":
                 changed = connected in (True, None)
                 connected = False

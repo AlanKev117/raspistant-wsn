@@ -15,7 +15,9 @@ from gpiozero import DigitalInputDevice
 PIR_PIN = 24
 HALL_PIN = 23
 
+
 class Sensor(ABC):
+    """Clase abstracta para un sensor genérico"""
 
     @abstractmethod
     def __init__(self, name):
@@ -24,7 +26,7 @@ class Sensor(ABC):
     @abstractmethod
     def get_reading(self):
         pass
-    
+
     @abstractmethod
     def get_name(self):
         pass
@@ -39,8 +41,8 @@ class Sensor(ABC):
 
 
 class DummySensor(Sensor):
-    """ Clase que instancia un objeto de tipo sensor para hacer pruebas
-    """
+    """Clase que instancia un objeto de tipo sensor para hacer pruebas"""
+
     def __init__(self, name):
         self.name = name
 
@@ -58,8 +60,8 @@ class DummySensor(Sensor):
 
 
 class PIRSensor(Sensor):
-    """ Clase que instancia el objeto para el sensor de movimiento PIR
-    """
+    """Clase que instancia el objeto para el sensor de movimiento PIR"""
+
     def __init__(self, name):
         self.name = name
         self.pir_sensor = DigitalInputDevice(pin=PIR_PIN, pull_up=False)
@@ -76,9 +78,10 @@ class PIRSensor(Sensor):
     def deactivate(self):
         self.pir_sensor.close()
 
+
 class HallSensor(Sensor):
-    """ Clase que instancia el objeto para el sensor de efecto HALL
-    """
+    """Clase que instancia el objeto para el sensor de efecto HALL"""
+
     def __init__(self, name):
         self.name = name
         self.hall_sensor = DigitalInputDevice(pin=HALL_PIN, pull_up=True)
