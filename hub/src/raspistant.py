@@ -105,7 +105,7 @@ def raspistant_process(model, device, trigger, timeout, verbose):
     
     # Configuración del logger
     assistant_logger = logging.getLogger("ASSISTANT")
-    assistant_logger.setLevel(logging.INFO if verbose else logging.WARNING)
+    # assistant_logger.setLevel(logging.INFO if verbose else logging.WARNING)
     handler = logging.StreamHandler()
     handler.setLevel(logging.INFO if verbose else logging.WARNING)
     formatter = logging.Formatter(

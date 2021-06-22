@@ -107,7 +107,7 @@ DEFAULT_LANGUAGE_CODE = "en-US"
 CREDENTIALS_PATH = os.path.join(
     click.get_app_dir('google-oauthlib-tool'), 'credentials.json')
 
-assistant_logger = logging.getLogger("ASSISTANT")
+LOGGER_NAME = "ASSISTANT"
 
 
 def create_conversation_stream():
@@ -149,6 +149,8 @@ def create_grpc_channel():
             El objeto grpc_channel que será el canal de comunicación para
             enviar peticiones a la API de Goole.
     """
+
+    assistant_logger = logging.getLogger(LOGGER_NAME)
 
     # Carga las credenciales OAuth 2.0 para acceder a la API de Google Assistant
     try:
@@ -221,6 +223,7 @@ class HubAssistant(object):
         )
         self.deadline = DEFAULT_GRPC_DEADLINE
         self.device_handler = create_hub_device_handler(device_id)
+        self.logger = logging.getLogger(LOGGER_NAME)
 
 
     def __enter__(self):
@@ -242,6 +245,7 @@ class HubAssistant(object):
                 Booleano que nos indica si hay o no un error con la conexión
                 de gRPC.
         """
+        assistant_logger = logging.getLogger(LOGGER_NAME)
         is_grpc_error = isinstance(e, grpc.RpcError)
         if is_grpc_error and (e.code() == grpc.StatusCode.UNAVAILABLE):
             assistant_logger.error('grpc unavailable error: %s', e)
@@ -262,13 +266,13 @@ class HubAssistant(object):
         device_actions_requests = []
 
         self.conversation_stream.start_recording()
-        assistant_logger.info('Recording audio request.')
+        self.logger.info('Recording audio request.')
 
         def iter_log_assist_requests():
             for c in self.gen_assist_requests():
                 assistant_helpers.log_assist_request_without_audio(c)
                 yield c
-            assistant_logger.debug('Reached end of AssistRequest iteration.')
+            self.logger.debug('Reached end of AssistRequest iteration.')
 
         """ Este generador reúne las respuestas del Asistente recibidas del
             canal gRPC de la API Google Assistant.
@@ -282,30 +286,30 @@ class HubAssistant(object):
                                           self.deadline):
             assistant_helpers.log_assist_response_without_audio(resp)
             if resp.event_type == END_OF_UTTERANCE:
-                assistant_logger.info('End of audio request detected.')
-                assistant_logger.info('Stopping recording.')
+                self.logger.info('End of audio request detected.')
+                self.logger.info('Stopping recording.')
                 self.conversation_stream.stop_recording()
             if resp.speech_results:
-                assistant_logger.info('Transcript of user request: "%s".',
+                self.logger.info('Transcript of user request: "%s".',
                              ' '.join(r.transcript
                                       for r in resp.speech_results))
             if len(resp.audio_out.audio_data) > 0:
                 if not self.conversation_stream.playing:
                     self.conversation_stream.stop_recording()
                     self.conversation_stream.start_playback()
-                    assistant_logger.info('Playing assistant response.')
+                    self.logger.info('Playing assistant response.')
                 self.conversation_stream.write(resp.audio_out.audio_data)
             if resp.dialog_state_out.conversation_state:
                 conversation_state = resp.dialog_state_out.conversation_state
-                assistant_logger.debug('Updating conversation state.')
+                self.logger.debug('Updating conversation state.')
                 self.conversation_state = conversation_state
             if resp.dialog_state_out.volume_percentage != 0:
                 volume_percentage = resp.dialog_state_out.volume_percentage
-                assistant_logger.info('Setting volume to %s%%', volume_percentage)
+                self.logger.info('Setting volume to %s%%', volume_percentage)
                 self.conversation_stream.volume_percentage = volume_percentage
             if resp.dialog_state_out.microphone_mode == DIALOG_FOLLOW_ON:
                 continue_conversation = True
-                assistant_logger.info('Expecting follow-on query from user.')
+                self.logger.info('Expecting follow-on query from user.')
             elif resp.dialog_state_out.microphone_mode == CLOSE_MICROPHONE:
                 continue_conversation = False
             if resp.device_action.device_request_json:
@@ -320,10 +324,10 @@ class HubAssistant(object):
                 device_actions_futures.extend(fs)
 
         if len(device_actions_futures):
-            assistant_logger.info('Waiting for device executions to complete.')
+            self.logger.info('Waiting for device executions to complete.')
             concurrent.futures.wait(device_actions_futures)
 
-        assistant_logger.info('Finished playing assistant response.')
+        self.logger.info('Finished playing assistant response.')
         self.conversation_stream.stop_playback()
         return continue_conversation
 
