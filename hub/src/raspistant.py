@@ -104,7 +104,15 @@ def raspistant_process(model, device, trigger, timeout, verbose):
     """
     
     # Configuración del logger
-    logging.basicConfig(level=logging.INFO if verbose else logging.WARNING)
+    assistant_logger = logging.getLogger("ASSISTANT")
+    assistant_logger.setLevel(logging.INFO if verbose else logging.WARNING)
+    handler = logging.StreamHandler()
+    handler.setLevel(logging.INFO if verbose else logging.WARNING)
+    formatter = logging.Formatter(
+      fmt='%(levelname)s - %(name)s - %(asctime)s.%(msecs)03d - %(message)s', 
+      datefmt='%H:%M:%S')
+    handler.setFormatter(formatter)
+    assistant_logger.addHandler(handler)
 
     # Verificamos que los argumentos de activación sean válidos
     wait_for_trigger = define_trigger_waiter(trigger, BUTTON_GPIO_PIN)
@@ -116,7 +124,7 @@ def raspistant_process(model, device, trigger, timeout, verbose):
                                       args=(18811, timeout, verbose >= 2),
                                       daemon=True)
         rs_process.start()
-        logging.info("Servidor de registro iniciado.")
+        assistant_logger.info("Servidor de registro iniciado.")
 
         with HubAssistant(model, device) as hub_assistant:
 
@@ -132,7 +140,7 @@ def raspistant_process(model, device, trigger, timeout, verbose):
                 keep_conversation = hub_assistant.assist()
 
     except Exception as e:
-        logging.error("Ocurrió un error inesperado en el asistente.")
+        assistant_logger.error("Ocurrió un error inesperado en el asistente.")
         raise e
 
 

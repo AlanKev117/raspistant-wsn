@@ -107,6 +107,8 @@ DEFAULT_LANGUAGE_CODE = "en-US"
 CREDENTIALS_PATH = os.path.join(
     click.get_app_dir('google-oauthlib-tool'), 'credentials.json')
 
+assistant_logger = logging.getLogger("ASSISTANT")
+
 
 def create_conversation_stream():
     """ Crea un flujo de conversación con la fuente que se configura para
@@ -156,15 +158,15 @@ def create_grpc_channel():
             http_request = google.auth.transport.requests.Request()
             credentials.refresh(http_request)
     except Exception as e:
-        logging.error('Error loading credentials: %s', e)
-        logging.error('Run google-oauthlib-tool to initialize '
+        assistant_logger.error('Error loading credentials: %s', e)
+        assistant_logger.error('Run google-oauthlib-tool to initialize '
                       'new OAuth 2.0 credentials.')
         sys.exit(-1)
 
     # Una vez autorizado el acceso, se crea el canal grpc de comunicación a la API.
     grpc_channel = google.auth.transport.grpc.secure_authorized_channel(
         credentials, http_request, ASSISTANT_API_ENDPOINT)
-    logging.info('Connecting to %s', ASSISTANT_API_ENDPOINT)
+    assistant_logger.info('Connecting to %s', ASSISTANT_API_ENDPOINT)
 
     return grpc_channel
 
@@ -242,7 +244,7 @@ class HubAssistant(object):
         """
         is_grpc_error = isinstance(e, grpc.RpcError)
         if is_grpc_error and (e.code() == grpc.StatusCode.UNAVAILABLE):
-            logging.error('grpc unavailable error: %s', e)
+            assistant_logger.error('grpc unavailable error: %s', e)
             return True
         return False
 
@@ -260,13 +262,13 @@ class HubAssistant(object):
         device_actions_requests = []
 
         self.conversation_stream.start_recording()
-        logging.info('Recording audio request.')
+        assistant_logger.info('Recording audio request.')
 
         def iter_log_assist_requests():
             for c in self.gen_assist_requests():
                 assistant_helpers.log_assist_request_without_audio(c)
                 yield c
-            logging.debug('Reached end of AssistRequest iteration.')
+            assistant_logger.debug('Reached end of AssistRequest iteration.')
 
         """ Este generador reúne las respuestas del Asistente recibidas del
             canal gRPC de la API Google Assistant.
@@ -280,8 +282,8 @@ class HubAssistant(object):
                                           self.deadline):
             assistant_helpers.log_assist_response_without_audio(resp)
             if resp.event_type == END_OF_UTTERANCE:
-                logging.info('End of audio request detected.')
-                logging.info('Stopping recording.')
+                assistant_logger.info('End of audio request detected.')
+                assistant_logger.info('Stopping recording.')
                 self.conversation_stream.stop_recording()
             if resp.speech_results:
                 logging.info('Transcript of user request: "%s".',
