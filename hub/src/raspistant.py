@@ -105,7 +105,7 @@ def raspistant_process(model, device, trigger, timeout, verbose):
     
     # Configuración del logger
     assistant_logger = logging.getLogger("ASSISTANT")
-    # assistant_logger.setLevel(logging.INFO if verbose else logging.WARNING)
+    assistant_logger.setLevel(logging.INFO if verbose else logging.WARNING)
     handler = logging.StreamHandler()
     handler.setLevel(logging.INFO if verbose else logging.WARNING)
     formatter = logging.Formatter(
@@ -113,6 +113,7 @@ def raspistant_process(model, device, trigger, timeout, verbose):
       datefmt='%H:%M:%S')
     handler.setFormatter(formatter)
     assistant_logger.addHandler(handler)
+    assistant_logger.propagate = False
 
     # Verificamos que los argumentos de activación sean válidos
     wait_for_trigger = define_trigger_waiter(trigger, BUTTON_GPIO_PIN)
