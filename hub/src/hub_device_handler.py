@@ -27,7 +27,7 @@
 import logging
 import time
 
-from googlesamples.assistant.grpc import device_helpers
+from googlesamples.assistant.grpc import assistant_helpers, device_helpers
 from hub.src.rpc_client import RPCClient
 from hub.src.voice_interface import hablar
 
@@ -51,6 +51,8 @@ def create_hub_device_handler(device_id):
     
     hub_device_handler = device_helpers.DeviceRequestHandler(device_id)
 
+    assistant_logger = logging.getLogger("ASSISTANT")
+
     #   Se crea un cliente RPC para conectarse con los nodos sensores
     client = RPCClient()
 
@@ -65,7 +67,7 @@ def create_hub_device_handler(device_id):
             servidor de registro y a los cuales se puede tener acceso mediante una llamada
             a procedimiento remoto.
         """
-        logging.info("Descubriendo nodos sensores.")
+        assistant_logger.info("Descubriendo nodos sensores.")
 
         #   Se envía la petición al cliente RPC, y con ésta se obtiene el numero de nodos
         #   distintos en la red y tambien nos regresa la cantidad de nodos con un nombre
@@ -78,7 +80,7 @@ def create_hub_device_handler(device_id):
             nodos_msg = "Se encontró un nodo"
         else:
             nodos_msg = "Se encontraron %d nodos" % cantidad_nodos
-        logging.info(nodos_msg)
+        assistant_logger.info(nodos_msg)
 
         hablar(nodos_msg)
 
@@ -95,7 +97,7 @@ def create_hub_device_handler(device_id):
                              f"repetido{ese}: {nombres_repetidos}. "
                              f"Asegúrate de que todos los nodos tengan un "
                              f"nombre único.")
-            logging.warning(repetidos_msg)
+            assistant_logger.warning(repetidos_msg)
             hablar(repetidos_msg)
 
     @hub_device_handler.command('listar_nodos')
@@ -107,22 +109,22 @@ def create_hub_device_handler(device_id):
             y lista cada uno de los sensores que éstán registrados, mencionando su nombre
             propio asignado al iniciar el nodo sensor.
         """
-        logging.info("Listando nodos sensores disponibles")
+        assistant_logger.info("Listando nodos sensores disponibles")
         lista = list(client.get_available_nodes().keys())
         cantidad_lista = len(lista)
 
         # Listado de nodos dictados por el asistente de voz
         if cantidad_lista == 0:
-            logging.info("Sin nodos sensores guardados")
+            assistant_logger.info("Sin nodos sensores guardados")
             hablar("No tengo nodos sensores guardados")
         else:
-            logging.info(f"Nodos a listar: {lista}")
+            assistant_logger.info(f"Nodos a listar: {lista}")
             articulo = "un" if cantidad_lista == 1 else f"{cantidad_lista}"
             nodo_palabra = "nodo" if cantidad_lista == 1 else "nodos"
             hablar(f"Listando {articulo} {nodo_palabra}.")
             for i in range(cantidad_lista):
                 time.sleep(1)
-                logging.info("Nodo %d: %s" % (i+1, lista[i]))
+                assistant_logger.info("Nodo %d: %s" % (i+1, lista[i]))
                 hablar("Nodo %d: %s" % (i+1, lista[i]))
 
     @hub_device_handler.command('desconectar_nodo')
@@ -137,11 +139,11 @@ def create_hub_device_handler(device_id):
                     Nombre propio del sensor que se quiere desconectar.
         """
         try:
-            logging.info("Desconectando nodo sensor %s" % sensor_name)
+            assistant_logger.info("Desconectando nodo sensor %s" % sensor_name)
             client.forget_sensor(sensor_name.lower())
         except:
             # No existe la llave o fue imposible conectarse.
-            logging.warning(f"Nodo <{sensor_name}> no registrado")
+            assistant_logger.warning(f"Nodo <{sensor_name}> no registrado")
 
     @hub_device_handler.command('consultar_nodo')
     def consultar_nodo(sensor_name):
@@ -158,7 +160,7 @@ def create_hub_device_handler(device_id):
 
         """
 
-        logging.info("Obteniendo datos del nodo sensor %s" % sensor_name)
+        assistant_logger.info("Obteniendo datos del nodo sensor %s" % sensor_name)
 
         try:
             measurement, sensor_type = client.get_sensor_reading(
@@ -173,12 +175,12 @@ def create_hub_device_handler(device_id):
             else:
                 res = (f"El sensor {sensor_name} "
                        f"regresó la medición: {measurement}")
-            logging.info(res)
+            assistant_logger.info(res)
             hablar(res)
 
         except:
             # No existe la llave o fue imposible conectarse.
-            logging.error(f"Imposible conectarse con {sensor_name}")
+            assistant_logger.error(f"Imposible conectarse con {sensor_name}")
             hablar(f"Lo siento, no me pude conectar con el nodo {sensor_name}")
 
     return hub_device_handler
